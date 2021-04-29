@@ -57,8 +57,5 @@ if __name__ == '__main__':
 
     test_loop_double("Hello", 20)
     print()
-    algorithm_recorder.get_scope_recorder().print_call_order_scope_complete()
-    print()
-    algorithm_recorder.get_scope_recorder().print_call_order_scope()
-    print()
-    algorithm_recorder.get_scope_recorder().print_amount_scopes_per_scope_name()
+
+    algorithm_recorder.print()

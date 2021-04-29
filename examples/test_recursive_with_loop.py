@@ -20,14 +20,17 @@ Explanation:
 Reference:
 
 """
+from pprint import pprint
+
 from algorithm_analyzer.algorithm_recorder import AlgorithmRecorder
 
 algorithm_recorder = AlgorithmRecorder()
 
+count = 0
+
 
 @algorithm_recorder.decorator_wrapper_callable
 def recursive(x, sum=None):
-
     if sum is None:
         sum = 0
 
@@ -35,7 +38,7 @@ def recursive(x, sum=None):
         return 1
 
     for i in range(x):
-        algorithm_recorder.iteration_scope_start("For each loop", i)
+        algorithm_recorder.iteration_scope_start("i", i)
 
         value = recursive(i, sum)
 
@@ -46,13 +49,15 @@ def recursive(x, sum=None):
 
 
 if __name__ == '__main__':
-
     print(recursive(7))
+    print()
+    algorithm_recorder.print()
 
-    # algorithm_recorder.print()
-    print()
-    algorithm_recorder.get_scope_recorder().print_call_order_scope_complete()
-    print()
-    algorithm_recorder.get_scope_recorder().print_call_order_scope()
-    print()
-    algorithm_recorder.get_scope_recorder().print_amount_scopes_per_scope_name()
+    # print()
+    # algorithm_recorder.get_scope_recorder().print_call_order_scope_complete()
+    # print()
+    # algorithm_recorder.get_scope_recorder().print_call_order_scope()
+    # print()
+    # algorithm_recorder.get_scope_recorder().print_amount_scopes_per_scope_name()
+
+    pprint(algorithm_recorder.__dict__)
