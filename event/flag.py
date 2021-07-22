@@ -21,7 +21,7 @@ Reference:
 """
 from typing import Union
 
-from algorithm_analyzer.event.event import Event
+from python_code_recorder.event.event import Event
 
 
 class Flag(Event):

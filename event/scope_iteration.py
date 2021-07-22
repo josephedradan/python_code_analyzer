@@ -21,7 +21,7 @@ Reference:
 """
 from typing import Union
 
-from algorithm_analyzer.event.scope import ScopeEnd, Scope
+from python_code_recorder.event.scope import ScopeEnd, Scope
 
 
 class ScopeIteration(Scope):

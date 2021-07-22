@@ -22,10 +22,11 @@ Reference:
 """
 from __future__ import annotations
 
+from abc import ABC
 from enum import Enum
 from typing import Union, List, Any
 
-from algorithm_analyzer.event.event import Event
+from python_code_recorder.event.event import Event
 
 
 class ScopeEnd(Enum):
@@ -38,7 +39,7 @@ class IterationEnd(ScopeEnd):
     CONTINUE = "Continue"
 
 
-class Scope(Event):
+class Scope(Event, ABC):
     def __init__(self,
                  event_parent: Union[Event, None],
                  event_previous: Union[Event, None],
@@ -69,7 +70,7 @@ class Scope(Event):
         TODO FIX ME NOT SPECIFIC
         :return:
         """
-        return [self._index_callable_stack_frame_scope_recorder,
+        return [self._list_scope_jump_order,
                 self._index_stack_frame_callable]
 
     def add_to_list_scope_jump_order(self, scope_given: Scope):
@@ -77,5 +78,3 @@ class Scope(Event):
 
     def get_list_scope_jump_order(self) -> List[Scope]:
         return self._list_scope_jump_order
-
-

@@ -21,8 +21,8 @@ Reference:
 """
 from typing import List
 
-from algorithm_analyzer.event.event import Event
-from algorithm_analyzer.event_recorder import EventRecorder
+from python_code_recorder.event.event import Event
+from python_code_recorder.event_recorder.event_recorder import EventRecorder
 
 
 class EventRecorderPrinter:
@@ -34,7 +34,7 @@ class EventRecorderPrinter:
         self._stack_event: List[Event] = self.event_recorder.get_stack_event()
 
         # List of events called in order with event start and event end (start and end are not explicitly stated)
-        self._list_call_order_event_complete: List[Event] = self.event_recorder.get_list_call_order_event_complete()
+        self._list_call_order_event_complete: List[Event] = self.event_recorder.get_list_event_complete()
 
     def print_call_order_event_complete(self, spacing_multiple=10) -> None:
         """
@@ -132,7 +132,7 @@ class EventRecorderPrinter:
         #
         #     counter += 1
 
-        for event_current in self.event_recorder.get_list_call_order_event():
+        for event_current in self.event_recorder.get_list_event():
             str_temp = "{}{}".format(" " * event_current.get_index_stack() * spacing_multiplier, event_current)
             print(str_temp)
 
@@ -148,7 +148,7 @@ class EventRecorderPrinter:
 
         # for k, v in self.event_recorder.get_dict_k_name_event_v_events().items():
 
-        for event_current in self.event_recorder.get_list_call_order_event():
+        for event_current in self.event_recorder.get_list_event():
             str_temp = "{}{}".format(" " * event_current.get_index_stack() * spacing_multiplier,
                                      event_current.get_str_simple())
             print(str_temp)

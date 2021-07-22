@@ -28,35 +28,33 @@ Reference:
         Reference:
             https://stackoverflow.com/questions/12638408/decorating-hex-function-to-pad-zeros
 
-
 """
 from __future__ import annotations
 
 import traceback
 from collections import defaultdict
 from functools import wraps
-from typing import Any
+from typing import Any, Callable
 
-from algorithm_analyzer.event.scope import IterationEnd
-from algorithm_analyzer.event.scope_callable import ScopeCallable
-from algorithm_analyzer.event.scope_iteration import ScopeIteration
-from algorithm_analyzer.event_recorder import EventRecorder
-from algorithm_analyzer.event_recorder_printer import EventRecorderPrinter
+from python_code_recorder.event.scope import IterationEnd
+from python_code_recorder.event.scope_callable import ScopeCallable
+from python_code_recorder.event.scope_iteration import ScopeIteration
+from python_code_recorder.event_recorder.event_recorder import EventRecorder
+from python_code_recorder.event_recorder.event_recorder_printer import EventRecorderPrinter
 
 
 def _decorator_internal_checker(callable_given=None):
     """
-    Checks if a particular method can be called after AlgorithmRecorder has ran
+    This decorator is uniquely used by the CodeRecoder
+
+    IDK what this should do
 
     :return:
     """
 
     # TODO: DO SOMETHING HERE IDK WHAT TO DO WITH THIS, REGULATOR, CHECKER, ETC...
-    # print("SDFSDF")
 
     def decorator(callable_given):
-        # print("SDFSDF 2")
-
         @wraps(callable_given)
         def wrapper(*args, **kwargs) -> Any:
             # print("HEEEH:", args[0]._scope_recorder._index_scope_order)
@@ -78,12 +76,21 @@ def _decorator_internal_checker(callable_given=None):
     return decorator(callable_given) if callable_given else decorator
 
 
-class AlgorithmRecorder:
+class CodeRecorder:
+    """
+    Records the execution of code
+
+    """
 
     def __init__(self):
 
         # Make a dictionary to store the callable and its stack frame relative to it being called
-        self._dict_k_callable_v_index_frame_stack_callable = defaultdict(int)
+        self._dict_k_callable_name_v_index_stack_frame_callable = defaultdict(int)
+
+        #####
+        """
+        Private vars
+        """
 
         # Record the stack frame index relative to where this object was created
         self._index_frame_scope_recorder = 0
@@ -91,19 +98,22 @@ class AlgorithmRecorder:
         # Track the current callable being called
         self._callable_current = None
 
-        # Make a scope recorder object to record the scopes being created and being entered
-        self._scope_recorder = EventRecorder()
+        # Make a Event recorder object to record the scopes being created and being entered
+        self._event_recorder = EventRecorder()
 
-        self.scope_recorder_printer = EventRecorderPrinter(self._scope_recorder)
+        #####
+
+        self.event_recorder_printer = EventRecorderPrinter(self._event_recorder)
 
     def decorator_wrapper_callable(self, callable_given=None) -> Any:
         """
-        Higher order decorator
+        Higher order decorator only accessible by this object that you put on top of a callable header to allow that
+        callable to be recorded
 
         1.  Increment and decrement a callable_given's stack frame index.
         2.  Increment and decrement the algorithm recorder's stack frame index (The stack frame relative to the creation
             of the algorithm recorder).
-        3.  Makes an a scope object when the callable is called.
+        3.  Makes a event object when the callable is called.
         4.  Keep track of the current callable being called.
 
         This wrapper wraps the given callable so when the callable is called a new scope is created and
@@ -113,7 +123,7 @@ class AlgorithmRecorder:
         of the same name is called again. Though when a another callable is called the index for that corresponding
         callable is incremented and the recorder's index is incremented.
 
-        Basically, when a callable is called, a scope object is created with its corresponding stack frame
+        Basically, when a callable is called, an event object is created with its corresponding stack frame
         index being incremented and the scope recorder's index being incremented.
         Both the recorder's stack frame index and the corresponding callable scope stack frame
         index is decremented when the callable scope is completed (the function has completed its execution).
@@ -127,7 +137,7 @@ class AlgorithmRecorder:
         :return: The result from the callable
         """
 
-        def decorator(callable_given):
+        def decorator(callable_given: Callable):
             """
             Actual decorator
 
@@ -149,7 +159,7 @@ class AlgorithmRecorder:
                 self._callable_current = callable_given
 
                 # Increment the corresponding callable's stack frame index
-                self._dict_k_callable_v_index_frame_stack_callable[callable_given] += 1
+                self._dict_k_callable_name_v_index_stack_frame_callable[callable_given] += 1
 
                 # Increment the recorder's stack frame index
                 self._index_frame_scope_recorder += 1
@@ -164,7 +174,7 @@ class AlgorithmRecorder:
                 self._callable_scope_end(result)
 
                 # Decrement the corresponding callable's stack frame index
-                self._dict_k_callable_v_index_frame_stack_callable[callable_given] -= 1
+                self._dict_k_callable_name_v_index_stack_frame_callable[callable_given] -= 1
 
                 # Decrement the recorder's stack frame index
                 self._index_frame_scope_recorder -= 1
@@ -183,13 +193,13 @@ class AlgorithmRecorder:
         Add a variable's name and a variable's value into the current scope's dictionary of variables and their
         corresponding values
 
-        TODO: Should I include the storing of the ending of a scope's variables
+        TODO: Should I include the starting of the ending of a scope's variables
 
         :param variable_name: variable name
         :param variable_value: variable value
         :return:
         """
-        stack_top = self._scope_recorder.get_event_stack_top()
+        stack_top = self._event_recorder.get_event_stack_top()
 
         stack_top.record_variable(variable_name, variable_value)
 
@@ -204,12 +214,12 @@ class AlgorithmRecorder:
         """
 
         # Get the index of the callable's stack frame
-        index_frame_stack_callable = self._dict_k_callable_v_index_frame_stack_callable[self._callable_current]
+        index_frame_stack_callable = self._dict_k_callable_name_v_index_stack_frame_callable[self._callable_current]
 
         # Create a ScopeIteration object
         scope_new = ScopeIteration(
-            self._scope_recorder.get_event_stack_top_parent(),
-            self._scope_recorder.get_event_stack_top(),
+            self._event_recorder.get_event_stack_top_parent(),
+            self._event_recorder.get_event_stack_top(),
             self._index_frame_scope_recorder,
             index_frame_stack_callable,
             name_iterable,
@@ -217,7 +227,7 @@ class AlgorithmRecorder:
         )
 
         # Push the scope into the scope recorder
-        self._scope_recorder.push_event(scope_new)
+        self._event_recorder.push_event(scope_new)
 
     def iteration_scope_end_none(self) -> None:
         """
@@ -225,8 +235,8 @@ class AlgorithmRecorder:
 
         :return: None
         """
-        self._scope_recorder.get_event_stack_top().set_end = IterationEnd.NONE
-        self._scope_recorder.pop_event()
+        self._event_recorder.get_event_stack_top().set_end = IterationEnd.NONE
+        self._event_recorder.pop_event()
 
     def iteration_scope_end_break(self) -> None:
         """
@@ -234,8 +244,8 @@ class AlgorithmRecorder:
 
         :return: None
         """
-        self._scope_recorder.get_event_stack_top().set_end = IterationEnd.BREAK
-        self._scope_recorder.pop_event()
+        self._event_recorder.get_event_stack_top().set_end = IterationEnd.BREAK
+        self._event_recorder.pop_event()
 
     def iteration_scope_end_continue(self) -> None:
         """
@@ -243,8 +253,8 @@ class AlgorithmRecorder:
 
         :return: None
         """
-        self._scope_recorder.get_event_stack_top().set_end = IterationEnd.CONTINUE
-        self._scope_recorder.pop_event()
+        self._event_recorder.get_event_stack_top().set_end = IterationEnd.CONTINUE
+        self._event_recorder.pop_event()
 
     def _callable_scope_start(self, *args, **kwargs) -> None:
         """
@@ -254,12 +264,12 @@ class AlgorithmRecorder:
         """
 
         # Get the index of the callable's stack frame
-        index_frame_stack_callable = self._dict_k_callable_v_index_frame_stack_callable[self._callable_current]
+        index_frame_stack_callable = self._dict_k_callable_name_v_index_stack_frame_callable[self._callable_current]
 
         # Create a ScopeCallable object
         scope_new = ScopeCallable(
-            self._scope_recorder.get_event_stack_top_parent(),
-            self._scope_recorder.get_event_stack_top(),
+            self._event_recorder.get_event_stack_top_parent(),
+            self._event_recorder.get_event_stack_top(),
             self._index_frame_scope_recorder,
             index_frame_stack_callable,
             self._callable_current,
@@ -268,7 +278,7 @@ class AlgorithmRecorder:
         )
 
         # Push the scope into the scope recorder
-        self._scope_recorder.push_event(scope_new)
+        self._event_recorder.push_event(scope_new)
 
     def _callable_scope_end(self, result) -> None:
         """
@@ -281,7 +291,7 @@ class AlgorithmRecorder:
         :return: None
         """
 
-        top_stack = self._scope_recorder.get_event_stack_top()
+        top_stack = self._event_recorder.get_event_stack_top()
         if isinstance(top_stack, ScopeCallable):
             try:
                 top_stack.set_result(result)
@@ -290,7 +300,7 @@ class AlgorithmRecorder:
                 print(e)
                 exit(1)
 
-        self._scope_recorder.pop_event()
+        self._event_recorder.pop_event()
 
     def get_scope_recorder(self) -> EventRecorder:
         """
@@ -298,7 +308,7 @@ class AlgorithmRecorder:
 
         :return: the scope recorder for this object
         """
-        return self._scope_recorder
+        return self._event_recorder
 
     @_decorator_internal_checker
     def print(self):
@@ -332,7 +342,7 @@ class AlgorithmRecorder:
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print("Call order scope Complete")
         print()
-        self.scope_recorder_printer.print_call_order_event_complete()
+        self.event_recorder_printer.print_call_order_event_complete()
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()
@@ -340,7 +350,7 @@ class AlgorithmRecorder:
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print("Call order scope")
         print()
-        self.scope_recorder_printer.print_call_order_event()
+        self.event_recorder_printer.print_call_order_event()
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()
@@ -348,7 +358,7 @@ class AlgorithmRecorder:
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print("Call order scope Simple")
         print()
-        self.scope_recorder_printer.print_call_order_event_simple()
+        self.event_recorder_printer.print_call_order_event_simple()
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()
@@ -356,7 +366,7 @@ class AlgorithmRecorder:
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print("Amount of scopes per scope name")
         print()
-        self.scope_recorder_printer.print_amount_events_per_event_name()
+        self.event_recorder_printer.print_amount_events_per_event_name()
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()
@@ -364,7 +374,7 @@ class AlgorithmRecorder:
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print("Amount of scopes per scope name + actual scopes used")
         print()
-        self.scope_recorder_printer.print_dict_k_name_event_v_events()
+        self.event_recorder_printer.print_dict_k_name_event_v_events()
         print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()

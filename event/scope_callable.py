@@ -21,7 +21,7 @@ Reference:
 """
 from typing import Union, Any
 
-from algorithm_analyzer.event.scope import Scope
+from python_code_recorder.event.scope import Scope
 
 
 class ScopeCallable(Scope):
@@ -67,8 +67,15 @@ class ScopeCallable(Scope):
         return self._callable_object_current.__qualname__
 
     def __str__(self):
+        """
+        Type, Address (Cpython), callable name
+
+        :return:
+        """
+        address_hex = "{0}{1:0{2}X}".format("0x", id(self), 16)
+
         return "{}: {}: {}".format(ScopeCallable.__name__,
-                                   "{0}{1:0{2}X}".format("0x", id(self), 16),
+                                   address_hex,
                                    self._callable_object_current.__name__)
 
     def get_str_simple(self):

@@ -11,17 +11,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32818b7f-a115-435f-808b-56ee5986f406" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/event/event.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/event/flag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/event/scope.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithm_recorder.py" beforeDir="false" afterPath="$PROJECT_DIR$/algorithm_recorder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scope.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scope_recorder.py" beforeDir="false" afterPath="$PROJECT_DIR$/event_recorder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_idk.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_loop_double.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_recurisve_with_sudden_exit.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_recursive_with_loop.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/algorithm_recorder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/flag.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/flag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/scope.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/scope.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/scope_callable.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/scope_callable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/scope_iteration.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/scope_iteration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event_recorder.py" beforeDir="false" afterPath="$PROJECT_DIR$/event_recorder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event_recorder_printer.py" beforeDir="false" afterPath="$PROJECT_DIR$/event_recorder_printer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/eddy test algo.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/eddy test algo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/mid.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/mid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test something.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test something.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_idk.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_idk.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_loop_double.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_loop_double.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_recurisve_with_sudden_exit.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_recurisve_with_sudden_exit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_recursive_with_loop.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_recursive_with_loop.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,29 +70,7 @@
       <recent name="H:\Programming\Python\Projects_GitHub\algorithm_analyzer\event" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_loop_double">
-    <configuration name="mid" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="algorithm_analyzer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/mid.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.test_idk">
     <configuration name="scope" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="algorithm_analyzer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -103,6 +85,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/event/scope.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test_idk" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="algorithm_analyzer" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/test_idk.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -178,19 +182,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.mid" />
       <item itemvalue="Python.test_recursive_with_loop" />
       <item itemvalue="Python.scope" />
       <item itemvalue="Python.test_recurisve_with_sudden_exit" />
       <item itemvalue="Python.test_loop_double" />
+      <item itemvalue="Python.test_idk" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test_idk" />
         <item itemvalue="Python.test_loop_double" />
         <item itemvalue="Python.test_recurisve_with_sudden_exit" />
         <item itemvalue="Python.test_recursive_with_loop" />
         <item itemvalue="Python.scope" />
-        <item itemvalue="Python.mid" />
       </list>
     </recent_temporary>
   </component>
@@ -206,6 +210,8 @@
       <workItem from="1616134814099" duration="5859000" />
       <workItem from="1616150837570" duration="6262000" />
       <workItem from="1616536586222" duration="3400000" />
+      <workItem from="1619669591827" duration="776000" />
+      <workItem from="1625985725419" duration="312000" />
     </task>
     <servers />
   </component>
@@ -241,22 +247,26 @@
       <screen x="1920" y="63" width="1680" height="1050" />
     </state>
     <state x="2250" y="63" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1615962202997" />
-    <state width="1386" height="852" key="GridCell.Tab.0.bottom" timestamp="1616282472281">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="1386" height="852" key="GridCell.Tab.0.bottom" timestamp="1619670373720">
+      <screen x="1920" y="63" width="1680" height="1050" />
     </state>
     <state width="1386" height="852" key="GridCell.Tab.0.bottom/0.0.1920.1080/1920.63.1680.1050@0.0.1920.1080" timestamp="1616282472281" />
-    <state width="1386" height="852" key="GridCell.Tab.0.center" timestamp="1616282472280">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="1386" height="852" key="GridCell.Tab.0.bottom/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1619670373720" />
+    <state width="1386" height="852" key="GridCell.Tab.0.center" timestamp="1619670373720">
+      <screen x="1920" y="63" width="1680" height="1050" />
     </state>
     <state width="1386" height="852" key="GridCell.Tab.0.center/0.0.1920.1080/1920.63.1680.1050@0.0.1920.1080" timestamp="1616282472280" />
-    <state width="1386" height="852" key="GridCell.Tab.0.left" timestamp="1616282472280">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="1386" height="852" key="GridCell.Tab.0.center/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1619670373720" />
+    <state width="1386" height="852" key="GridCell.Tab.0.left" timestamp="1619670373720">
+      <screen x="1920" y="63" width="1680" height="1050" />
     </state>
     <state width="1386" height="852" key="GridCell.Tab.0.left/0.0.1920.1080/1920.63.1680.1050@0.0.1920.1080" timestamp="1616282472280" />
-    <state width="1386" height="852" key="GridCell.Tab.0.right" timestamp="1616282472281">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="1386" height="852" key="GridCell.Tab.0.left/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1619670373720" />
+    <state width="1386" height="852" key="GridCell.Tab.0.right" timestamp="1619670373720">
+      <screen x="1920" y="63" width="1680" height="1050" />
     </state>
     <state width="1386" height="852" key="GridCell.Tab.0.right/0.0.1920.1080/1920.63.1680.1050@0.0.1920.1080" timestamp="1616282472281" />
+    <state width="1386" height="852" key="GridCell.Tab.0.right/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1619670373720" />
     <state x="461" y="184" key="SettingsEditor" timestamp="1616151170556">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -272,11 +282,12 @@
     <state x="2467" y="321" width="585" height="534" key="find.popup/0.0.1920.1080/1920.63.1680.1050@1920.63.1680.1050" timestamp="1615961200098" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/algorithm_analyzer$test_loop_double.coverage" NAME="test_loop_double Coverage Results" MODIFIED="1616202272256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/algorithm_analyzer$test_loop_double.coverage" NAME="test_loop_double Coverage Results" MODIFIED="1619669620708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$test_recursive_with_loop.coverage" NAME="test_recursive_with_loop Coverage Results" MODIFIED="1616152048424" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$mid.coverage" NAME="mid Coverage Results" MODIFIED="1616149090552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$scope.coverage" NAME="scope Coverage Results" MODIFIED="1616152029919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/event" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$pytest_in_mid_py.coverage" NAME="pytest in mid.py Coverage Results" MODIFIED="1616149076954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/algorithm_analyzer$test_idk.coverage" NAME="test_idk Coverage Results" MODIFIED="1619669764196" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$test_recurisve_with_sudden_exit.coverage" NAME="test_recurisve_with_sudden_exit Coverage Results" MODIFIED="1616152052183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$eddy_test_algo.coverage" NAME="eddy test algo Coverage Results" MODIFIED="1616038951023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/algorithm_analyzer$pytest_in_tset_mid_py.coverage" NAME="pytest in mid.py Coverage Results" MODIFIED="1616149051022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />

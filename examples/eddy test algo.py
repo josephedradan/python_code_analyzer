@@ -19,9 +19,9 @@ Explanation:
 Reference:
 
 """
-from algorithm_analyzer.algorithm_recorder import AlgorithmRecorder
+from python_code_recorder.code_recorder import CodeRecorder
 
-tester = AlgorithmRecorder()
+tester = CodeRecorder()
 
 
 @tester.decorator_wrapper_callable

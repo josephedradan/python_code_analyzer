@@ -52,7 +52,7 @@ class Event(ABC):
         self._dict_k_varaible_name_v_variable_value = defaultdict(list)
 
         # Index of the event in order
-        self._index_event_order: Union[int, None] = None
+        self._index_event_number: Union[int, None] = None
 
         # Index of the event in the stack
         self._index_stack: Union[int, None] = None
@@ -89,12 +89,12 @@ class Event(ABC):
         """
         return self._index_stack_frame_callable
 
-    def set_index_event_order(self, index: int) -> None:
+    def set_index_event_number(self, index: int) -> None:
         """
         Set the index of self from the event_recorder
 
         """
-        self._index_event_order = index
+        self._index_event_number = index
 
     def set_index_stack(self, index: int) -> None:
         """
@@ -109,7 +109,7 @@ class Event(ABC):
 
         :return:
         """
-        return self._index_event_order
+        return self._index_event_number
 
     def get_index_stack(self) -> int:
         """
@@ -148,7 +148,8 @@ class Event(ABC):
     def __str__(self):
         return self._str_helper(Event, self)
 
-    def _str_helper(self, class_current, self_current):
+    @staticmethod
+    def _str_helper(class_current, self_current):
         return "{}: {}".format(class_current.__name__,
                                "{0}{1:0{2}X}".format("0x", id(self_current), 16),
                                )
