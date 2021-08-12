@@ -20,7 +20,7 @@ Reference:
 
 """
 
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 algorithm_recorder = CodeRecorder()
 
@@ -29,9 +29,9 @@ algorithm_recorder = CodeRecorder()
 def greeting(n):
     if n <= 1: return
     for i in range(n):
-        algorithm_recorder.iteration_scope_start("i", i)
+        algorithm_recorder.event_iteration_start("i", i)
         print("hello")
-        algorithm_recorder.iteration_scope_end_none()
+        algorithm_recorder.event_iteration_end()
 
 
 if __name__ == '__main__':

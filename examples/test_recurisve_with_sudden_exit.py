@@ -19,7 +19,7 @@ Explanation:
 Reference:
 
 """
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 algorithm_recorder = CodeRecorder()
 

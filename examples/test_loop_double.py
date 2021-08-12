@@ -19,43 +19,44 @@ Explanation:
 Reference:
 
 """
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 algorithm_recorder = CodeRecorder()
 
 
 @algorithm_recorder.decorator_wrapper_callable
 def test_loop_double(string, n):
-    count = 0
+    _count = 0
 
     i = 1
 
+    algorithm_recorder.event_iteration_start("W1", {"i": i}, str_id="test")
     while i <= n:
-        algorithm_recorder.iteration_scope_start("Upper", i)
 
         # print(i)
 
         j = 1
+        algorithm_recorder.event_iteration_start("W2", {"i": i, "j": j}, str_id="test")
         while j <= i:
-            algorithm_recorder.iteration_scope_start("Inner", j)
-
             # print("\t", j)
             # print(string)
 
             j = j * 2
 
-            count += 1
-            algorithm_recorder.iteration_scope_end_none()
+            _count += 1
+
+            algorithm_recorder.event("W2V", {"j": j, "_count": _count})
+
+        algorithm_recorder.event_iteration_end()
 
         i = i + 1
-        algorithm_recorder.iteration_scope_end_none()
+    algorithm_recorder.event_iteration_end()
 
-    # print(f"Count: {count}")
+    # print(f"Count: {_count}")
 
 
 if __name__ == '__main__':
-
-    test_loop_double("Hello", 20)
+    test_loop_double("Hello", 2)
     print()
 
     algorithm_recorder.print()

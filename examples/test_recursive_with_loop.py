@@ -22,7 +22,7 @@ Reference:
 """
 from pprint import pprint
 
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 algorithm_recorder = CodeRecorder()
 
@@ -38,12 +38,12 @@ def recursive(x, sum=None):
         return 1
 
     for i in range(x):
-        algorithm_recorder.iteration_scope_start("i", i)
+        algorithm_recorder.event_iteration_start("i", i)
 
         value = recursive(i, sum)
 
         sum += value
-        algorithm_recorder.iteration_scope_end_none()
+        algorithm_recorder.event_iteration_end()
 
     return sum
 

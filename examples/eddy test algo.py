@@ -19,7 +19,7 @@ Explanation:
 Reference:
 
 """
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 tester = CodeRecorder()
 
@@ -29,20 +29,20 @@ def func(n):
     i = 1
 
     while i <= n - 2:
-        tester.iteration_scope_start("i", i)
+        tester.event_iteration_start("i", i)
         j = i + 1
         while j <= n - 1:
-            tester.iteration_scope_start("j", j)
+            tester.event_iteration_start("j", j)
             k = j + 1
             while k <= n:
-                tester.iteration_scope_start("k", k)
+                tester.event_iteration_start("k", k)
                 print("Hello Class")
                 k += 1
-                tester.iteration_scope_end_none()
+                tester.event_iteration_end()
             j += 1
-            tester.iteration_scope_end_none()
+            tester.event_iteration_end()
         i += 1
-        tester.iteration_scope_end_none()
+        tester.event_iteration_end()
 
 
 if __name__ == '__main__':

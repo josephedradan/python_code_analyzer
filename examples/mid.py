@@ -19,7 +19,7 @@ Explanation:
 Reference:
 
 """
-from python_code_recorder.code_recorder import CodeRecorder
+from python_code_analyzer.python_code_analyzer import CodeRecorder
 
 algorithm_recorder = CodeRecorder()
 
@@ -35,38 +35,38 @@ def func_mid(n):
     k = 1
     z = 0
     while z < n:
-        algorithm_recorder.iteration_scope_start("z", z)
+        algorithm_recorder.event_iteration_start("z", z)
 
         i = 1
 
         while i <= n / 2:
-            algorithm_recorder.iteration_scope_start("i", i)
+            algorithm_recorder.event_iteration_start("i", i)
 
             count +=1
 
             i += 1
-            algorithm_recorder.iteration_scope_end_none()
+            algorithm_recorder.event_iteration_end()
 
         j = 1
         while j < (n - 1):
-            algorithm_recorder.iteration_scope_start("j", j)
+            algorithm_recorder.event_iteration_start("j", j)
 
             p = 0
             while (p < j):
-                algorithm_recorder.iteration_scope_start("p", p)
+                algorithm_recorder.event_iteration_start("p", p)
 
                 count += 1
 
                 p += 1
-                algorithm_recorder.iteration_scope_end_none()
+                algorithm_recorder.event_iteration_end()
 
             j += 1
-            algorithm_recorder.iteration_scope_end_none()
+            algorithm_recorder.event_iteration_end()
 
         z += 1
 
         k += 1
-        algorithm_recorder.iteration_scope_end_none()
+        algorithm_recorder.event_iteration_end()
 
     return k, count
 
