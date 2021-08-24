@@ -109,7 +109,7 @@ class DataCommon(ABC):
         """
         return self._stack_frame_index
 
-    def auto_set_stack_frame_index(self, index) -> None:
+    def auto_set_stack_frame_number(self, index) -> None:
         """
         Set the stack frame index
 

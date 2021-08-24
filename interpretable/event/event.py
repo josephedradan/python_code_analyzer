@@ -34,13 +34,11 @@ class Event(Interpretable, ABC):
     def __init__(self,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None,
+                 python_frame_index: Union[int, None] = None,
                  dict_recorded_var: Union[Dict[str, Any], None] = None
                  ):
-        """
 
-        :param name: Name of this event
-        """
-        super().__init__(name, str_id)
+        super().__init__(name, str_id, python_frame_index)
         ######
 
         """Variables set by the recorder"""

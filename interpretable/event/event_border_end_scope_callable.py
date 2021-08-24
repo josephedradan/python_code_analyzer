@@ -21,6 +21,7 @@ Reference:
 """
 from typing import Any, Union, Dict
 
+from python_code_analyzer.functions_common import get_str_limited
 from python_code_analyzer.interpretable.event.event_border_callable import EventBorderCallable
 from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
 
@@ -31,9 +32,10 @@ class EventBorderEndScopeCallable(EventBorderEnd, EventBorderCallable):
                  callable_return: Union[Any, None] = None,
                  str_id: Union[str, None] = None,
                  name: Union[str, None] = None,
+                 python_frame_index: Union[int, None] = None,
                  dict_recorded_var: Union[Dict[str, Any], None] = None
                  ):
-        super().__init__(name, str_id, dict_recorded_var)
+        super().__init__(name, str_id, python_frame_index, dict_recorded_var)
 
         ######
 
@@ -46,3 +48,11 @@ class EventBorderEndScopeCallable(EventBorderEnd, EventBorderCallable):
 
     def get_callable_return(self) -> Any:
         return self._callable_return
+
+    def get_str_pseudo_like(self):
+        return "{} return {}".format(super(EventBorderEndScopeCallable, self).get_str_pseudo_like(),
+                                     get_str_limited(self._callable_return))
+        # return "{}return {}".format(
+        #     super(EventBorderEndScopeCallable, self).get_str_pseudo_like(),
+        #     get_str_limited(self._callable_return)
+        # )

@@ -23,6 +23,7 @@ from typing import List, Union
 
 from python_code_analyzer.interpretable.event.event import Event
 from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
+from python_code_analyzer.interpretable.event.event_border_end_scope_callable import EventBorderEndScopeCallable
 from python_code_analyzer.interpretable.event.event_border_end_scope_outer import EventBorderEndScopeOuter
 from python_code_analyzer.interpretable.event.event_border_start import EventBorderStart
 from python_code_analyzer.interpretable.event.event_border_start_scope_callable import EventBorderStartScopeCallable
@@ -71,35 +72,8 @@ class InterpretableRecorder:
 
         # self._scope_stack_scope_pushed_recent: Union[Scope, None] = None
 
-        """Event Recent Push/Pop"""
-
-        # Most recently stack popped event
-        # self._event_stack_event_popped_recent: Union[Event, None] = None
-
-        # Most recently stack pushed event
-        # self._event_stack_event_pushed_recent: Union[Event, None] = None
-
-        ######
-
-        # Name of interpretable with its tuple line number
-        # self._dict_k_interpretable_name_v_id_tuple_line_number: Dict[str, Sequence[int]] = {}
-
-        """
-        Tuple ID based on all the frames associated with the creation of the interpretable using the frame's source 
-        code's line number in a tuple
-        
-        Notes:
-            This tuple ID allows you identify objects created on the same line number in source code.
-        
-        """
-        # self._dict_k_tuple_id_line_number_v_list_interpretable: Dict[Sequence[int], List[Interpretable]] = (
-        #     Interpretable.get_dict_k_tuple_id_line_number_v_list_interpretable())
-
-        ######
-
         """
         Initialize starting
-        
         """
         scope_outer = ScopeOuter()
 
@@ -154,7 +128,7 @@ class InterpretableRecorder:
         """
         return self._list_scope_order[-1] if self._list_scope_order else None
 
-    def get_stack_frame_index_current(self) -> int:
+    def get_stack_frame_number(self) -> int:
         return len(self._stack_scope)
 
     """Scope Stack Push/Pop"""
@@ -186,8 +160,8 @@ class InterpretableRecorder:
 
         ######
 
-        # Assign scope_new's Stack frame index
-        scope_new.auto_set_stack_frame_index(self.get_stack_frame_index_current())
+        # Assign scope_new's Stack frame number
+        scope_new.auto_set_stack_frame_number(self.get_stack_frame_number())
 
         # Assign scope_new's parent scope
         scope_new.auto_set_scope_parent(self._scope_stack_scope_pushed_recent)
@@ -204,12 +178,24 @@ class InterpretableRecorder:
     def _pop_scope(self, event_border_end_given: EventBorderEnd):
         """
 
-        1. Set Scope to most recent pop
-        2. Pop Scope from Scope Stack
+        1. Pop the current stack scope and assign it the most recent scope popped
+        (self._scope_stack_scope_popped_recent)
 
         :return:
         """
         scope_popped = self._stack_scope.pop()
+
+        """
+        Special case that if you exited a scope created from an EventBorderStartScopeIteration via return,
+        then you need to properly pop from self._stack_scope to get the scope 
+        """
+        if isinstance(event_border_end_given, EventBorderEndScopeCallable):
+            while True:
+                if isinstance(scope_popped, ScopeCallable):
+                    break
+
+                scope_popped = self._stack_scope.pop()
+
         ######
 
         event_border_end_given.set_scope_part_of(scope_popped)
@@ -245,7 +231,7 @@ class InterpretableRecorder:
         ######
 
         # Assign event_given's stack index number
-        event_given.auto_set_stack_frame_index(self.get_stack_frame_index_current())
+        event_given.auto_set_stack_frame_number(self.get_stack_frame_number())
 
         # Assign event_given's parent Scope
         event_given.auto_set_scope_parent(self._scope_stack_scope_pushed_recent)
@@ -267,69 +253,9 @@ class InterpretableRecorder:
         if isinstance(event_given, EventBorderStart):
             self._push_scope(event_given)
 
-    # def pop_event(self) -> Union[Event, None]:
-    #     """
-    #     1. Pop the top event from the stack of events.
-    #     2. Track the popped event.
-    #     3. Add the popped event into self._list_event_order_complete
-    #
-    #     :return: Event or None
-    #     """
-    #
-    #     if not self._stack_event:
-    #         print("Stack is empty")
-    #         return None
-    #
-    #     # Get the popped event
-    #     stack_popped = self._stack_event.pop()
-    #
-    #     # Assign what is the most recently popped event
-    #     self._event_stack_event_popped_recent = stack_popped
-    #
-    #     # Add the popped back to self._list_call_order_event_complete to indicate that it's been completed
-    #     self._list_event_order.append(stack_popped)
-    #     return stack_popped
-
-    # def get_index_event(self) -> int:
-    #     """
-    #     Get the index of the event that was pushed to _list_order_event.
-    #     Basically a counter for everytime the self.add_event() was called.
-    #
-    #     *** It should match the amount of event objects created which is can be found by looping through the linked
-    #     list based on a events's following of previous event***
-    #
-    #     :return: index of the event that w as added from self.add_event() call
-    #     """
-    #     return len(self._list_event_order)
-
-    # def get_stack_event(self) -> List[Event]:
-    #     """
-    #     The stack of events
-    #
-    #     :return:
-    #     """
-    #     return self._stack_event
-
     def get_list_event(self) -> List[Event]:
         """
         List of events with the proper exit event
         :return:
         """
         return self._list_event_order
-
-    # def get_list_event(self):
-    #     """
-    #     List of events in order ignoring the exit portion of the event
-    #
-    #     :return:
-    #     :rtype:
-    #     """
-    #     return self._list_event_order
-
-    # def get_dict_k_tuple_id_line_number_v_list_interpretable(self) -> Dict[str, List[Interpretable]]:
-    #     """
-    #     Dict key is event name and value is the list of events
-    #
-    #     :return:
-    #     """
-    #     return self._dict_k_tuple_id_line_number_v_list_interpretable

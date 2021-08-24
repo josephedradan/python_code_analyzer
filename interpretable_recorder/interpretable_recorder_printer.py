@@ -19,61 +19,51 @@ Explanation:
 Reference:
 
 """
-from typing import List, Sequence, Dict, Any
+from typing import Sequence, Dict, Any
 
-from python_code_analyzer.functions_common import get_list_length_from_list_str, \
-    get_str_from_list_str_and_length
+from python_code_analyzer.functions_common import (get_list_length_from_list_str, get_str_from_list_str_and_length)
 from python_code_analyzer.interpretable.event.event import Event
 from python_code_analyzer.interpretable.interpretable import Interpretable
 from python_code_analyzer.interpretable_recorder.interpretable_recorder import InterpretableRecorder
 
-"""
-Python frame index for the line number when an event is created
-
-Notes:
-    The assumption is -3, it may change if whatever makes events change.
-    -3 will probably give you the line number of the event call put in by the user in their code
-"""
-PYTHON_FRAME_INDEX_DEFAULT = -3
-
-AMOUNT_SPACING_MULTIPLE = 4
-AMOUNT_SPACING_HEADER = 2
+AMOUNT_SPACING_MULTIPLE = 4  # Amount of space for the pseudo code look a like code
+AMOUNT_SPACING_HEADER = 2  # Amount of spacing between headers
 
 """
 Dictionary of Interpretable Header and the method to get that header information given a interpretable
 Notes:
     Interp. C.# = Interpretable Count Number
     type C.# = Type Count Number
-    Line# = Line Number
+    Line# = Assumed Python code Line Number
+    P.F.T. ID Line# C.# = Python Frame Tuple ID Line Number Count Number
     Line# C.# = Line Number Count Number
     str_id = String ID
     str_id C.# = String ID Count Number
     name = Name
     name C.# = Name Count Number
+    Stack Frame # = Stack Frame number
 
 """
 DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD = {
     "Interp. C.#": lambda interpretable: interpretable.get_call_number_interpretable(),
     "type C.#": lambda interpretable: interpretable.get_call_number_type(),
-    "Line#": lambda interpretable: interpretable.get_line_number_by_python_frame_object_index(
-        PYTHON_FRAME_INDEX_DEFAULT),
-    "Line# C.#": lambda interpretable: interpretable.get_call_number_tuple_id_line_number(),
+    "Line#": lambda interpretable: interpretable.get_line_number(),
+    "P.F.T. ID Line# C.#": lambda interpretable: interpretable.get_call_number_tuple_id_python_frame_line_number(),
+    "Line# C.#": lambda interpretable: interpretable.get_call_number_line_number(),
     "str_id": lambda interpretable: interpretable.get_str_id(),
     "str_id C.#": lambda interpretable: interpretable.get_call_number_str_id(),
     "name": lambda interpretable: interpretable.get_name(),
-    "name C.#": lambda interpretable: interpretable.get_call_number_name()
+    "name C.#": lambda interpretable: interpretable.get_call_number_name(),
+    "Stack Frame #": lambda interpretable: interpretable.get_stack_frame_index()
 }
 
 
 class EventRecorderPrinter:
 
-    def __init__(self, event_recorder: InterpretableRecorder):
-        self.interpretable_recorder = event_recorder
+    def __init__(self, interpretable_recorder: InterpretableRecorder):
+        self._interpretable_recorder = interpretable_recorder
 
-        # List of events called in order with event start and event end (start and end are not explicitly stated)
-        self._list_interpretable: List[Event] = self.interpretable_recorder.get_list_event()
-
-    def print_call_order_simple(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
+    def print_event_call_order_simple(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
 
         Example:
@@ -93,27 +83,27 @@ class EventRecorderPrinter:
         :return:
         """
 
-        for interpretable in self._list_interpretable:
+        for event_current in self._interpretable_recorder.get_list_event():
             """
-            indenting = Space * (Stack frame - 1) * Spacing
+            str_space_for_code = Space * (Stack frame - 1) * Spacing
             
             Notes:
                 - 1 to subtract from the outer scope, if there is not outer scope then expect some breaking 
             """
-            indenting = self._get_indenting(interpretable, amount_spacing_multiple)
+            str_space_for_code = self._get_str_space_for_code(event_current, amount_spacing_multiple)
 
-            str_temp = "{}{}".format(indenting, interpretable.get_str_pseudo_like())
+            str_temp = "{}{}".format(str_space_for_code, event_current.get_str_pseudo_like())
             print(str_temp)
 
-    def print_call_order_detailed(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
+    def print_event_call_order_detailed(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
         Prints all the features of the basic example and a lot more
 
         Notes:
-            In the example below, the table is included along with the with is printed with the print_call_order_simple
-            
+            In the example below, the table is included along with the with is printed with the print_event_call_order_simple
+
         Example:
-            Line#  Interp. C.#  Tup. Line# C.#  type C.#  str_id  str_id C.#  name  name C.#  
+            Line#  Interp. C.#  Tup. Line# C.#  type C.#  str_id  str_id C.#  name  name C.#
             N/A    1            1               1                 1                 1
             33     2            1               1         test    1           W1    1
             39     3            1               2         test    2           W2    1
@@ -130,114 +120,132 @@ class EventRecorderPrinter:
         :return: None
         """
 
+        # Header names
         list_header = DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD
 
+        # List of lengths for each cell in the row
         list_data_length_max = get_list_length_from_list_str(list_header, AMOUNT_SPACING_HEADER)
 
-        for interpretable in self._list_interpretable:
-            for i, data in enumerate(get_list_data_of_interpretable(interpretable)):
+        # Loop to adjust values in list_data_length_max
+        for event_current in self._interpretable_recorder.get_list_event():
+            for i, data in enumerate(get_list_data_of_event(event_current)):
+                cell_length = len(str(data)) + AMOUNT_SPACING_HEADER
 
-                length = len(str(data)) + AMOUNT_SPACING_HEADER
+                if cell_length > list_data_length_max[i]:
+                    list_data_length_max[i] = cell_length
 
-                if length > list_data_length_max[i]:
-                    list_data_length_max[i] = length
-
+        # Print the Header
         print(get_str_from_list_str_and_length(list_header, list_data_length_max))
 
-        for interpretable in self._list_interpretable:
+        # Loop print the table body
+        for event_current in self._interpretable_recorder.get_list_event():
             """
-            indenting = Space * (Stack frame - 1) * Spacing
+            str_space_for_code = Space * (Stack frame - 1) * Spacing
 
             Notes:
                 - 1 to subtract from the outer scope, if there is not outer scope then expect some breaking 
             """
-            indenting = self._get_indenting(interpretable, amount_spacing_multiple)
+            str_space_for_code = self._get_str_space_for_code(event_current, amount_spacing_multiple)
 
-            list_data = get_list_data_of_interpretable(interpretable)
+            list_data = get_list_data_of_event(event_current)
 
             str_data = get_str_from_list_str_and_length(list_data, list_data_length_max)
 
-            str_full = "{}{}{}".format(str_data, indenting, interpretable.get_str_pseudo_like())
+            str_full = "{}{}{}".format(str_data, str_space_for_code, event_current.get_str_pseudo_like())
             print(str_full)
 
-    def print_call_order_event_simple(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE,
-                                      len_name_args_kwargs=None):
+    def print_event_call_order_debug(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE):
         """
+        Debug print
 
         :param amount_spacing_multiple:
         :return:
         """
 
-        # for k, v in self.event_recorder.get_dict_k_tuple_id_line_number_v_list_interpretable().items():
+        # for k, v in self.event_recorder.get_dict_k_tuple_id_python_frame_line_number_v_list_interpretable().items():
 
-        for event_current in self.interpretable_recorder.get_list_event():
-            part_1 = " " * event_current.get_stack_frame_index() * amount_spacing_multiple
-            part_2 = event_current.get_str_formal()
-            part_3 = "Source Code Count: {}".format(event_current.get_call_number_tuple_id_line_number())
-            part_4 = "Source Code Line Tuple ID: {}".format(event_current.get_tuple_id_line_number())
-            part_5 = "{} Call Number: {}".format(type(event_current).__qualname__,
-                                                 event_current.get_call_number_type())
-            part_6 = "Interpretable Call Number: {}".format(event_current.get_call_number_interpretable())
+        for event_current in self._interpretable_recorder.get_list_event():
+            str_space_for_code = " " * event_current.get_stack_frame_index() * amount_spacing_multiple
 
-            str_temp = "{}{} {} {} {} {}".format(part_1,
-                                                 part_2,
-                                                 part_3,
-                                                 part_4,
-                                                 part_5,
-                                                 part_6
-                                                 )
-            print(str_temp)
+            str_formal_event = event_current.get_str_formal()
+
+            str_data = " ".join([str(i) for i in get_list_data_of_event(event_current)])
+
+            str_full = "{}{} {} {}".format(
+                str_space_for_code,
+                str_formal_event,
+                str_data,
+                event_current.get_str_pseudo_like()
+            )
+            print(str_full)
 
     def _print_dict_k_str_v_list(self,
-                                 str_dict_key_header: str,
+                                 str_sorted_by: str,
                                  dict_k_v_list: Dict[Any, Sequence],
                                  amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE):
+        """
+        Given a name of what the dict is sorted by, a dict, and the amount of space
 
-        # Pre spacing
-        str_space_pre = " " * amount_spacing_multiple
 
-        for str_id, list_interpretable in dict_k_v_list.items():
+        :param str_sorted_by:
+        :param dict_k_v_list:
+        :param amount_spacing_multiple:
+        :return:
+        """
+        # Spacing before printing the table (Basically the margin on the left side)
+        str_space_margin = " " * amount_spacing_multiple
 
-            list_header = ["Index+1", *DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD]
+        # Header names
+        list_header = ["Index+1", *DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD]
 
+        # Loop over dictionary's key and value
+        for key, list_interpretable in dict_k_v_list.items():
+
+            # List of lengths for each cell in the row
             list_data_length_max = get_list_length_from_list_str(list_header, AMOUNT_SPACING_HEADER)
 
-            # Print the Key from the dict and the size of the sequence
+            # Loop to adjust values in list_data_length_max
+            for interpretable in self._interpretable_recorder.get_list_event():
+                for i, data in enumerate(get_list_data_of_event(interpretable)):
+                    cell_length = len(str(data)) + AMOUNT_SPACING_HEADER
+
+                    if cell_length > list_data_length_max[i]:
+                        list_data_length_max[i + 1] = cell_length
+
+            if key == -1:
+                key = "N/A"
+
+            # Print the Key from the dict and the size of its value
             print("{}: {}\n"
-                  "Amount: {}".format(str_dict_key_header, str_id, len(list_interpretable)))
+                  "Amount: {}".format(str_sorted_by, key, len(list_interpretable)))
 
             # Print header table
-            print("{}{}".format(str_space_pre, get_str_from_list_str_and_length(list_header, list_data_length_max)))
+            print("{}{}".format(str_space_margin, get_str_from_list_str_and_length(list_header, list_data_length_max)))
 
+            # Loop print the table body
             for index, interpretable in enumerate(list_interpretable):
-                indenting = self._get_indenting(interpretable, amount_spacing_multiple)
+                str_space_for_code = self._get_str_space_for_code(interpretable, amount_spacing_multiple)
 
-                list_data = [index + 1, *get_list_data_of_interpretable(interpretable)]
+                list_data = [index + 1, *get_list_data_of_event(interpretable)]
 
                 str_data = get_str_from_list_str_and_length(list_data, list_data_length_max)
 
-                str_full = "{}{}{}{}".format(str_space_pre, str_data, indenting, interpretable.get_str_pseudo_like())
+                str_full = "{}{}{}{}".format(str_space_margin,
+                                             str_data,
+                                             str_space_for_code,
+                                             interpretable.get_str_pseudo_like())
 
                 print(str_full)
             print()
 
     def print_dict_k_str_id_v_list_interpretable(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
-        Print the dict containing the interpretable's str_id with the amount of interpretables and the interpretables
-        themselves with data that have the same str_id.
+        Print the dict where the key is the interpretable's str_id and it's value is a list of interpretables with the
+        same str_id.
 
         Notes:
             The example below does include the printing of the interpretables, but it can't fit in the 120
             char limit so I removed it from the example below.
-
-        Example:
-            str_id: test
-            Amount: 3
-                Index+1  Interp. C.#  type C.#  Line#  Line# C.#  str_id  str_id C.#  name  name C.#
-                1        2            1         33     1          test    1           W1    1
-                2        3            2         39     1          test    2           W2    1
-                3        6            3         39     2          test    3           W2    2
-
 
         :param amount_spacing_multiple:
         :return:
@@ -251,8 +259,8 @@ class EventRecorderPrinter:
             self,
             amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
-        Print the dict containing the interpretable's name with the amount of interpretables and the interpretables
-        themselves with data that have the same name.
+        Print the dict where the key is the interpretable's name and it's value is a list of interpretables with the
+        same name.
 
         :param amount_spacing_multiple:
         :return:
@@ -266,8 +274,8 @@ class EventRecorderPrinter:
             self,
             amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
-        Print the dict containing the interpretable's __qualname__ with the amount of interpretables and the
-        interpretables themselves with data that have the same __qualname__.
+        Print the dict where the key is the interpretable's __qualname__ and it's value is a list of interpretables
+        with the same __qualname__.
 
         :param amount_spacing_multiple:
         :return:
@@ -281,47 +289,44 @@ class EventRecorderPrinter:
             self,
             amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
-        Print the dict containing the interpretable's tuple line number with the amount of interpretables and the
-        interpretables themselves with data that have the same tuple line number.
+        Print the dict where the key is the interpretable's tuple line number and it's value is a list of interpretables
+        with the same tuple line number.
 
         :param amount_spacing_multiple:
         :return:
         """
         self._print_dict_k_str_v_list("Tuple Line number",
-                                      Interpretable.get_dict_k_tuple_id_line_number_v_list_interpretable(),
+                                      Interpretable.get_dict_k_tuple_id_python_frame_line_number_v_list_interpretable(),
                                       amount_spacing_multiple)
 
-    def print_amount_events_per_event_name(self, spacing: int = 20):
+    def print_dict_k_line_number_v_list_interpretable(
+            self,
+            amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
-        Print the dict containing the event's name with the amount of events per event name
+        Print the dict where the key is the interpretable's line number and it's value is a list of interpretables
+        with the same line number.
 
-        Example:
-            Event name: func                 Amount of events: 1
-            Event name: i                    Amount of events: 4
-            Event name: j                    Amount of events: 10
-            Event name: k                    Amount of events: 20
-
-        :param spacing:
-        :return: None
+        :param amount_spacing_multiple:
+        :return:
         """
-        for key, value in Interpretable.get_dict_k_str_id_v_list_interpretable().items():
-            print("Event name: {0:<{1}} Amount of events: {2}".format(key, spacing if len(key) < spacing else len(
-                key) // 5 * 6, len(value)))
+        self._print_dict_k_str_v_list("Line number",
+                                      Interpretable.get_dict_k_line_number_v_list_interpretable(),
+                                      amount_spacing_multiple)
 
     @staticmethod
-    def _get_indenting(interpretable: Interpretable, amount_spacing_multiple: int, offset: int = 1):
+    def _get_str_space_for_code(event: Event, amount_spacing_multiple: int, offset: int = 1):
         """
         Get standard indenting
 
-        :param interpretable:
+        :param event:
         :param amount_spacing_multiple:
         :param offset:
         :return:
         """
-        return " " * (interpretable.get_stack_frame_index() - offset) * amount_spacing_multiple
+        return " " * (event.get_stack_frame_index() - offset) * amount_spacing_multiple
 
 
-def get_list_data_of_interpretable(interpretable: Interpretable):
+def get_list_data_of_event(event: Event):
     """
     Get interpretable data into a list
 
@@ -330,7 +335,7 @@ def get_list_data_of_interpretable(interpretable: Interpretable):
         The reason why N/A is returned is because I don't really have a use for -1 as a value returned, so it could
         be used to signify an error instead
 
-    :param interpretable:
+    :param event:
     :return:
     """
 
@@ -338,7 +343,7 @@ def get_list_data_of_interpretable(interpretable: Interpretable):
 
     for header, function_interpretable in DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD.items():
 
-        result = function_interpretable(interpretable)
+        result = function_interpretable(event)
 
         if result == -1:
             result = "N/A"

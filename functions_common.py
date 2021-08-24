@@ -21,6 +21,8 @@ Reference:
 """
 from typing import Sequence, Dict, Union, List, Any
 
+LENGTH_STRING_MAX = 35
+
 
 def get_dict_as_str(dict_given: Union[Dict, None]) -> str:
     """
@@ -117,7 +119,13 @@ def get_list_length_from_list_str(list_stings: Sequence[str], amount_space_addit
 
 
 def get_str_from_list_str_and_length(list_data: Sequence[Any], list_length: List[int]) -> str:
+    """
+    Return a string of the data from list_data based on the ints from list_length
 
+    :param list_data:
+    :param list_length:
+    :return:
+    """
     str_base = "{:<{}}" * len(list_data)
 
     list_str_and_length = []
@@ -128,3 +136,21 @@ def get_str_from_list_str_and_length(list_data: Sequence[Any], list_length: List
     str_base = str_base.format(*list_str_and_length)
 
     return str_base
+
+
+def get_str_limited(str_given: str, length_str: int = LENGTH_STRING_MAX):
+    """
+    Return a string to a certain size
+
+    :param str_given:
+    :param length_str:
+    :return:
+    """
+    # Make sure that the given is a string
+    str_given = str(str_given)
+
+    # Replace string into a limited form if necessary
+    if len(str_given) > length_str:
+        str_given = "{}{}".format(str_given[0:length_str], "...")
+
+    return str_given

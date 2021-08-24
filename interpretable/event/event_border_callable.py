@@ -33,12 +33,30 @@ class EventBorderCallable(EventBorder):
 
     """
 
-    def get_line_number_by_python_frame_object_index(self, index: int) -> int:
+    def get_line_number(self) -> int:
         """
-        Due to objects of this class being created from a decorator, Python frame objects DO NOT have access to the
-        line where the decorator was placed.
+        Because the inspect module cannot see the line number of where a decorator is located, the creation and thus the
+        line number for the creation of this object cannot be determined.
 
         :param index:
         :return:
+        """
+        return -1
+
+    def get_call_number_line_number(self):
+        """
+        Because the inspect module cannot see the line number of where a decorator is located, the creation and thus the
+        line number for the creation of this object cannot be determined.
+
+        :return:
+        """
+        return -1
+
+    def get_call_number_tuple_id_python_frame_line_number(self) -> int:
+        """
+        Because the inspect module cannot see the line number of where a decorator is located, the creation and thus the
+        line number for the creation of this object cannot be determined.
+
+        :return
         """
         return -1

@@ -43,6 +43,15 @@ from python_code_analyzer.interpretable.event.event_border_start_scope_iteration
 from python_code_analyzer.interpretable_recorder.interpretable_recorder import InterpretableRecorder
 from python_code_analyzer.interpretable_recorder.interpretable_recorder_printer import EventRecorderPrinter
 
+"""
+Python frame index for the line number when an event is created
+
+Notes:
+    The assumption is -3, it may change if whatever makes events change.
+    -3 will probably give you the line number of the event call put in by the user in their code
+"""
+PYTHON_FRAME_INDEX_DEFAULT = -3
+
 
 def _decorator_internal_checker(callable_given=None):
     """
@@ -77,13 +86,13 @@ def _decorator_internal_checker(callable_given=None):
     return decorator(callable_given) if callable_given else decorator
 
 
-class CodeRecorder:
+class PythonCodeAnalyzer:
     """
     Records the execution of code
 
     """
 
-    def __init__(self):
+    def __init__(self, python_frame_index=PYTHON_FRAME_INDEX_DEFAULT):
         # Make a dictionary to store the callable and its stack frame relative to it being called
         self._dict_k_callable_name_v_index_stack_frame_callable = defaultdict(int)
 
@@ -92,11 +101,8 @@ class CodeRecorder:
         Private vars
         """
 
-        # Record the stack frame index relative to where this object was created
-        # self._index_frame_scope_recorder = 0
-
-        # Track the current callable being called
-        # self._callable_current = None
+        # Frame to find the
+        self._python_frame_index = python_frame_index
 
         # Make a Event recorder object to record the scopes being created and being entered
         self._interpretable_recorder = InterpretableRecorder()
@@ -169,15 +175,6 @@ class CodeRecorder:
                 :return: Result of the callable
                 """
 
-                # Track the callable that will be executed
-                # self._callable_current = callable_given_inner
-
-                # Increment the corresponding callable's stack frame index
-                # self._dict_k_callable_name_v_index_stack_frame_callable[callable_given_inner] += 1
-
-                # Increment the recorder's stack frame index
-                # self._index_frame_scope_recorder += 1
-
                 # Create the scope for the callable_given
                 self._event_callable_start(callable_given_inner, args, kwargs, name_start, str_id_start,
                                            dict_recorded_var_start)
@@ -187,12 +184,6 @@ class CodeRecorder:
 
                 # State that the scope's callable returned not None
                 self._event_callable_end(result, name_end, str_id_end, dict_recorded_var_end)
-
-                # Decrement the corresponding callable's stack frame index
-                # self._dict_k_callable_name_v_index_stack_frame_callable[callable_given_inner] -= 1
-
-                # Decrement the recorder's stack frame index
-                # self._index_frame_scope_recorder -= 1
 
                 # Return the callable's result
                 return result
@@ -214,7 +205,10 @@ class CodeRecorder:
 
         """
 
-        event_new = Event(name, str_id, dict_recorded_vars)
+        event_new = Event(name,
+                          str_id,
+                          self._python_frame_index,
+                          dict_recorded_vars)
 
         self._interpretable_recorder.add_event(event_new)
 
@@ -227,7 +221,10 @@ class CodeRecorder:
         State that an iteration scope has been created and push that scope into the scope recorder
         """
 
-        event_new = EventBorderStartScopeIteration(name, str_id, dict_recorded_vars)
+        event_new = EventBorderStartScopeIteration(name,
+                                                   str_id,
+                                                   self._python_frame_index,
+                                                   dict_recorded_vars)
 
         self._interpretable_recorder.add_event(event_new)
 
@@ -242,7 +239,10 @@ class CodeRecorder:
         :return: None
         """
 
-        event_new = EventBorderEndScopeIteration(name, str_id, dict_recorded_vars)
+        event_new = EventBorderEndScopeIteration(name,
+                                                 str_id,
+                                                 self._python_frame_index,
+                                                 dict_recorded_vars)
 
         self._interpretable_recorder.add_event(event_new)
 
@@ -265,6 +265,7 @@ class CodeRecorder:
                                                   callable_kwargs,
                                                   name,
                                                   str_id,
+                                                  self._python_frame_index,
                                                   dict_recorded_vars)
 
         self._interpretable_recorder.add_event(event_new)
@@ -285,19 +286,11 @@ class CodeRecorder:
         :return: None
         """
 
-        # top_stack = self._interpretable_recorder.get_event_stack_event_top()
-        #
-        # if isinstance(top_stack, ScopeCallable):
-        #     try:
-        #         top_stack.set_callable_return(result)
-        #     except AttributeError as e:
-        #         traceback.print_exc()
-        #         print(e)
-        #         exit(1)
-        #
-        # self._interpretable_recorder.pop_event()
-
-        event_new = EventBorderEndScopeCallable(callable_return, name, str_id, dict_recorded_vars)
+        event_new = EventBorderEndScopeCallable(callable_return,
+                                                name,
+                                                str_id,
+                                                self._python_frame_index,
+                                                dict_recorded_vars)
 
         self._interpretable_recorder.add_event(event_new)
 
@@ -310,77 +303,76 @@ class CodeRecorder:
         return self._interpretable_recorder
 
     @_decorator_internal_checker
-    def print(self) -> None:
+    def print_all(self) -> None:
         """
-        Easy printing because I don't know what to show the user
+        Easy print all because I don't know what to show the user
 
         :return: None
         """
 
-        # TODO: THIS IS SOME UNIT TESTING SHIT TO SEE IF THE LINKED LIST MATCHES _scope_recorder.get_index_scope_order()
-        # current_scope = self._scope_recorder.get_scope_first()
-        # counter = 0
-        # while current_scope is not None:
-        #     print("START")
-        #     print(current_scope)
-        #     print("END")
-        #     print()
-        #
-        #     current_scope = current_scope.get_scope_following()
-        #     # print(current_scope)
-        #     counter += 1
-        #
-        # pprint(self._scope_recorder._list_call_order_scope_complete)
-        # print("_list_call_order_scope_complete", len(self._scope_recorder._list_call_order_scope_complete))
-        # print("Counter", counter)
-        # print("self._scope_recorder.get_index_scope_order()", self._scope_recorder.get_index_scope_order())
+        amount = 100
+        border_symbol = "#"
 
-        BORDER_AMOUNT = 100
-        BORDER_SYMBOL = "#"
-
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print("Call order scope Complete")
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order Simple")
         print()
-        self.event_recorder_printer.print_call_order_simple()
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
+        self.event_recorder_printer.print_event_call_order_simple()
         print()
         print()
 
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print("Call order scope")
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order Detailed")
         print()
-        self.event_recorder_printer.print_call_order_detailed()
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print()
-        print()
-
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print("Call order scope Simple")
-        print()
-        self.event_recorder_printer.print_call_order_event_simple()
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
+        self.event_recorder_printer.print_event_call_order_detailed()
         print()
         print()
 
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print("Amount of scopes per scope name")
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order Debug")
         print()
-        self.event_recorder_printer.print_amount_events_per_event_name()
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
+        self.event_recorder_printer.print_event_call_order_debug()
         print()
         print()
 
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
-        print("Amount of scopes per scope name + actual scopes used")
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order by String ID")
         print()
         self.event_recorder_printer.print_dict_k_str_id_v_list_interpretable()
-        print(BORDER_SYMBOL * BORDER_AMOUNT)
         print()
         print()
 
-        for i in self._interpretable_recorder.get_list_event():
-            print(i)
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order by name")
+        print()
+        self.event_recorder_printer.print_dict_k_name_v_list_interpretable()
+        print()
+        print()
 
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order by __qualname__")
+        print()
+        self.event_recorder_printer.print_dict_k_qualname_v_list_interpretable()
+        print()
+        print()
 
-if __name__ == '__main__':
-    pass
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order by Tuple Line Number")
+        print()
+        self.event_recorder_printer.print_dict_k_tuple_line_number_v_list_interpretable()
+        print()
+        print()
+
+        print(border_symbol * amount)
+        print(border_symbol * amount)
+        print("Event Call Order by Line Number")
+        print()
+        self.event_recorder_printer.print_dict_k_line_number_v_list_interpretable()
+        print()
+        print()

@@ -19,34 +19,65 @@ Explanation:
 Reference:
 
 """
-from python_code_analyzer.python_code_analyzer import CodeRecorder
+from python_code_analyzer.python_code_analyzer import PythonCodeAnalyzer
 
-tester = CodeRecorder()
+python_code_analyzer = PythonCodeAnalyzer()
 
 
-@tester.decorator_wrapper_callable
+@python_code_analyzer.decorator_wrapper_callable
 def func(n):
     i = 1
 
+    python_code_analyzer.event("i", {"i": i})
+
+    python_code_analyzer.event_iteration_start("while (i <= n - 2)")
     while i <= n - 2:
-        tester.event_iteration_start("i", i)
         j = i + 1
+
+        python_code_analyzer.event("j", {"j": j})
+
+        python_code_analyzer.event_iteration_start("while (j <= n - 1)")
         while j <= n - 1:
-            tester.event_iteration_start("j", j)
             k = j + 1
+
+            """
+            Uniquely identified by "Line Number" because line numbers are unique and 
+            "Event Call Order by Tuple Line Number" because the code is not recursive so the tuple line numbers
+            are unique.
+
+            Can identify both "k"s by using event names where the name is "k".
+            """
+            python_code_analyzer.event("k", {"k": k})
+
+            python_code_analyzer.event_iteration_start("while (k <= n)")
             while k <= n:
-                tester.event_iteration_start("k", k)
                 print("Hello Class")
                 k += 1
-                tester.event_iteration_end()
+
+                """
+                Uniquely identified by "Line Number" because line numbers are unique and 
+                "Event Call Order by Tuple Line Number" because the code is not recursive so the tuple line numbers
+                are unique.
+                 
+                Can identify both "k"s by using event names where the name is "k".
+                """
+                python_code_analyzer.event("k", {"k": k})
+
+            python_code_analyzer.event_iteration_end()
             j += 1
-            tester.event_iteration_end()
+
+        python_code_analyzer.event_iteration_end()
         i += 1
-        tester.event_iteration_end()
+
+    python_code_analyzer.event_iteration_end()
 
 
 if __name__ == '__main__':
-    func(4)
+    func(6)
+
+    python_code_analyzer.print_all()
+
+    # OLD PRINT FROM OLD VERSION + Analysis at the end
     """
     n       total calls in k
     10      120
@@ -374,5 +405,3 @@ if __name__ == '__main__':
                                                                     #6  # 6 result in the value of 0 so you can ignore
                                                                     
     """
-
-    tester.print()

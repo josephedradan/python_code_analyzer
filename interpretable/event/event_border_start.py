@@ -30,9 +30,11 @@ class EventBorderStart(EventBorder, ABC):
     def __init__(self,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None,
+                 python_frame_index: Union[int, None] = None,
                  dict_recorded_var: Union[Dict[str, Any], None] = None
                  ):
-        super().__init__(name, str_id, dict_recorded_var)
+        super().__init__(name, str_id, python_frame_index, dict_recorded_var)
 
     def get_str_pseudo_like(self) -> str:
-        return super(EventBorderStart, self).get_str_pseudo_like()
+        return "{} {{".format(super(EventBorderStart, self).get_str_pseudo_like())
+        # return "{}:".format(super(EventBorderStart, self).get_str_pseudo_like())

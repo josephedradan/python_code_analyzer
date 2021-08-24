@@ -11,6 +11,7 @@ Details:
 Description:
 
 Notes:
+    Double while loop
 
 IMPORTANT NOTES:
 
@@ -19,44 +20,41 @@ Explanation:
 Reference:
 
 """
-from python_code_analyzer.python_code_analyzer import CodeRecorder
+from python_code_analyzer.python_code_analyzer import PythonCodeAnalyzer
 
-algorithm_recorder = CodeRecorder()
+python_code_analyzer = PythonCodeAnalyzer()
 
 
-@algorithm_recorder.decorator_wrapper_callable
-def test_loop_double(string, n):
-    _count = 0
+@python_code_analyzer.decorator_wrapper_callable
+def loop_double(n):
+    count = 0
 
     i = 1
 
-    algorithm_recorder.event_iteration_start("W1", {"i": i}, str_id="test")
+    # While 1. "i" recorded. str_id = "test"
+    python_code_analyzer.event_iteration_start("W1", {"i": i}, str_id="test")
     while i <= n:
 
-        # print(i)
-
         j = 1
-        algorithm_recorder.event_iteration_start("W2", {"i": i, "j": j}, str_id="test")
-        while j <= i:
-            # print("\t", j)
-            # print(string)
 
+        # While 2. "i", "j" recorded. str_id = "test"
+        python_code_analyzer.event_iteration_start("W2", {"i": i, "j": j}, str_id="test")
+        while j <= i:
             j = j * 2
 
-            _count += 1
+            count += 1
 
-            algorithm_recorder.event("W2V", {"j": j, "_count": _count})
+            # While 2 Vars. "j", "count" recorded.
+            python_code_analyzer.event("W2 Vars", {"j": j, "count": count})
 
-        algorithm_recorder.event_iteration_end()
+        python_code_analyzer.event_iteration_end()
 
         i = i + 1
-    algorithm_recorder.event_iteration_end()
 
-    # print(f"Count: {_count}")
+    python_code_analyzer.event_iteration_end()
 
 
 if __name__ == '__main__':
-    test_loop_double("Hello", 2)
-    print()
+    loop_double(10)
 
-    algorithm_recorder.print()
+    python_code_analyzer.print_all()

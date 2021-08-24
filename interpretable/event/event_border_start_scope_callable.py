@@ -34,6 +34,7 @@ class EventBorderStartScopeCallable(EventBorderStart, EventBorderCallable):
                  callable_kwargs: Dict[str, Any] = None,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None,
+                 python_frame_index: Union[int, None] = None,
                  dict_recorded_var: Union[Dict[str, Any], None] = None
                  ):
         ######
@@ -49,7 +50,7 @@ class EventBorderStartScopeCallable(EventBorderStart, EventBorderCallable):
         # Callable's kwargs (Note that this does not copy kwargs)
         self._callable_kwargs: Union[Any, None] = callable_kwargs
 
-        super().__init__(name, str_id, dict_recorded_var)
+        super().__init__(name, str_id, python_frame_index, dict_recorded_var)
 
     def get_str_callable_call(self) -> str:
         """
@@ -78,7 +79,8 @@ class EventBorderStartScopeCallable(EventBorderStart, EventBorderCallable):
             else:
                 str_temp = "{} |{}|".format(str_temp, self.get_str_recorded_var())
 
-        str_temp = "{} {{".format(str_temp)
+        str_temp = "{}{}".format(str_temp, super(EventBorderStartScopeCallable, self).get_str_pseudo_like())
+        # str_temp = "{}{}".format(str_temp, super(EventBorderStartScopeCallable, self).get_str_pseudo_like())
 
         return str_temp
 

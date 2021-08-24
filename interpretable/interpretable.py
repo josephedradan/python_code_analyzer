@@ -44,7 +44,8 @@ class Interpretable(DataCommon, ABC):
         This tuple ID allows you identify objects created on the same line number in source code.
 
     """
-    _dict_k_tuple_id_line_number_v_list_interpretable: Dict[Sequence[int], List[Interpretable]] = defaultdict(list)
+    _dict_k_tuple_id_python_frame_line_number_v_list_interpretable: Dict[
+        Sequence[int], List[Interpretable]] = defaultdict(list)
 
     # Dict where the key is the object's string id and the value is the list of objects that have that same string id
     _dict_k_str_id_v_list_interpretable: Dict[str, List[Interpretable]] = defaultdict(list)
@@ -52,13 +53,23 @@ class Interpretable(DataCommon, ABC):
     # Dict where the key is the object's name and the value is the list of objects that have that same name
     _dict_k_name_v_list_interpretable: Dict[str, List[Interpretable]] = defaultdict(list)
 
+    """
+    Dict where the key is the object's python frame index and the value is the list of objects that have that same 
+    python frame index
+    """
+    _dict_k_line_number_v_list_interpretable: Dict[int, List[Interpretable]] = defaultdict(list)
+
     def __init__(self,
                  name: Union[str, None] = None,
-                 str_id: Union[str, None] = None
+                 str_id: Union[str, None] = None,
+                 python_frame_index: Union[int, None] = None,
                  ):
         super(Interpretable, self).__init__(name, str_id)
 
         ######
+
+        # Python frame index
+        self._python_frame_index = python_frame_index
 
         """Variables are automatically assigned abd are meta programming related"""
 
@@ -69,13 +80,16 @@ class Interpretable(DataCommon, ABC):
         self._call_number_interpretable: Union[int, None] = None
 
         # Assign Tuple id based on the python frame source code line numbers
-        self._tuple_id_line_number: Union[Sequence[int], None] = None
+        self._tuple_id_python_frame_line_number: Union[Sequence[int], None] = None
+
+        # Assign line number call number
+        self._call_number_line_number: Union[int, None] = None
 
         """
         Call number is based on how many objects are in the appropriate tuple id's list of interpretables in 
-        _dict_k_tuple_id_line_number_v_list_interpretable
+        _dict_k_tuple_id_python_frame_line_number_v_list_interpretable
         """
-        self._call_number_tuple_id_line_number: Union[int, None] = None
+        self._call_number_tuple_id_python_frame_line_number: Union[int, None] = None
 
         # Call number based on name
         self._call_number_name: Union[int, None] = None
@@ -94,13 +108,16 @@ class Interpretable(DataCommon, ABC):
         Interpretable._add_self_to_list_object_of_type_interpretable(self)
 
         # Handle self's id_tuple_line_number
-        Interpretable._handle_tuple_id_line_number(self)
+        Interpretable._handle_tuple_id_python_frame_line_number(self)
 
         # Handle self's name
         Interpretable._handle_dict_k_name_v_list_interpretable(self)
 
         # Handle self's string id
         Interpretable._handle_dict_k_str_id_v_list_interpretable(self)
+
+        # Handle self's python frame index (Also handles self's line number count)
+        Interpretable._handle_dict_k_python_frame_index_id_v_list_interpretable(self)
 
         ######
 
@@ -134,7 +151,7 @@ class Interpretable(DataCommon, ABC):
         self._call_number_interpretable = len(self._list_object_of_type_interpretable)
 
     @classmethod
-    def _handle_tuple_id_line_number(cls, self: Interpretable) -> None:
+    def _handle_tuple_id_python_frame_line_number(cls, self: Interpretable) -> None:
         """
         Handle the creation and setup for the tuple ID
 
@@ -148,19 +165,20 @@ class Interpretable(DataCommon, ABC):
         """
 
         # Setup tuple ID
-        self._set_tuple_id_line_number()
+        self._set_tuple_id_python_frame_line_number()
 
         # Ease of use for a tuple ID
-        tuple_id = self.get_tuple_id_line_number()
+        tuple_id = self.get_tuple_id_python_frame_line_number()
 
-        # Add self to _dict_k_tuple_id_line_number_v_list_interpretable
-        cls._dict_k_tuple_id_line_number_v_list_interpretable[tuple_id].append(self)
+        # Add self to _dict_k_tuple_id_python_frame_line_number_v_list_interpretable
+        cls._dict_k_tuple_id_python_frame_line_number_v_list_interpretable[tuple_id].append(self)
 
         # Setup self's tuple ID call number
-        self._call_number_tuple_id_line_number = len(
-            cls._dict_k_tuple_id_line_number_v_list_interpretable[self.get_tuple_id_line_number()])
+        self._call_number_tuple_id_python_frame_line_number = len(
+            cls._dict_k_tuple_id_python_frame_line_number_v_list_interpretable[
+                self.get_tuple_id_python_frame_line_number()])
 
-    def _set_tuple_id_line_number(self) -> None:
+    def _set_tuple_id_python_frame_line_number(self) -> None:
         """
         Set up a tuple of numbers
 
@@ -181,7 +199,7 @@ class Interpretable(DataCommon, ABC):
             list_id_temp.append(frame_current.f_lineno)
             frame_current = frame_current.f_back
 
-        self._tuple_id_line_number = tuple(list_id_temp)
+        self._tuple_id_python_frame_line_number = tuple(list_id_temp)
 
     @classmethod
     def _handle_dict_k_str_id_v_list_interpretable(cls, self: Interpretable):
@@ -209,9 +227,53 @@ class Interpretable(DataCommon, ABC):
 
         self._call_number_name = len(cls._dict_k_name_v_list_interpretable[self.get_name()])
 
-    ###
+    @classmethod
+    def _handle_dict_k_python_frame_index_id_v_list_interpretable(cls, self: Interpretable):
+        """
+        1. Get line number that created this object
+        1. Add self to dict where the key is based on the line number and the value is a list of type interpretable
+        2. Assign the call number for self's line number
 
-    def get_tuple_id_line_number(self) -> Sequence[int]:
+        :param self:
+        :return:
+        """
+
+        line_number = self.get_line_number()
+
+        cls._dict_k_line_number_v_list_interpretable[line_number].append(self)
+
+        self._call_number_line_number = len(
+            cls._dict_k_line_number_v_list_interpretable[line_number])
+
+    ###
+    def get_line_number(self) -> int:
+        """
+        Get line number of the python frame index based on the index setup in the constructor.
+
+        IMPORTANT NOTES:
+            *THE LINE NUMBER FOR DECORATORS CANNOT BE DETERMINED
+
+        :param index:
+        :return:`
+        """
+        return self.get_tuple_id_python_frame_line_number()[self._python_frame_index]
+
+
+
+
+    def get_python_frame_index_number(self):
+        """
+        Return the python frame index that was given by the initialization of this object.
+
+        Notes:
+            Used for determining what the line number of the creation of this object was.
+            Used for counting the amount of times that the line number was used.
+
+        :return:
+        """
+        return self._python_frame_index
+
+    def get_tuple_id_python_frame_line_number(self) -> Sequence[int]:
         """
         Return a tuple of ints. The ints are based on python frame source code line numbers
         that came from a inspect.currentframe() call.
@@ -228,7 +290,8 @@ class Interpretable(DataCommon, ABC):
 
         :return:
         """
-        return self._tuple_id_line_number
+        return self._tuple_id_python_frame_line_number
+
 
     def get_call_number_interpretable(self) -> int:
         """
@@ -284,13 +347,13 @@ class Interpretable(DataCommon, ABC):
 
         return self._call_number_name
 
-    def get_call_number_tuple_id_line_number(self) -> int:
+    def get_call_number_tuple_id_python_frame_line_number(self) -> int:
         """
-        Get the call number based on self's Tuple ID
+        Get the call number based on self's Tuple ID based on python's frame line numbers
 
         Notes:
             Call number is based on how many objects are in the appropriate tuple id's list of interpretables in
-            _dict_k_tuple_id_line_number_v_list_interpretable
+            _dict_k_tuple_id_python_frame_line_number_v_list_interpretable
 
             This number is useful for identifying a unique instance of an object created on the same source code line.
                 Example:
@@ -304,19 +367,15 @@ class Interpretable(DataCommon, ABC):
 
         :return:
         """
-        return self._call_number_tuple_id_line_number
+        return self._call_number_tuple_id_python_frame_line_number
 
-    def get_line_number_by_python_frame_object_index(self, index: int) -> int:
+    def get_call_number_line_number(self):
         """
-        Get line number of python frame via index from the tuple id line number
+        Return the call number based on the line number. The line number was determined by the python frame index
 
-        IMPORTANT NOTES:
-            *THE LINE NUMBER FOR DECORATORS CANNOT BE DETERMINED
-
-        :param index:
         :return:
         """
-        return self.get_tuple_id_line_number()[index]
+        return self._call_number_line_number
 
     @classmethod
     def get_dict_k_type_qualname_v_list_type_self(cls) -> Dict[str, List[Interpretable]]:
@@ -348,7 +407,8 @@ class Interpretable(DataCommon, ABC):
         return cls._list_object_of_type_interpretable
 
     @classmethod
-    def get_dict_k_tuple_id_line_number_v_list_interpretable(cls) -> Dict[Sequence[int], List[Interpretable]]:
+    def get_dict_k_tuple_id_python_frame_line_number_v_list_interpretable(cls) -> Dict[
+        Sequence[int], List[Interpretable]]:
         """
         Get a dict where the key is a tuple id with objects that are of type Interpretable.
 
@@ -358,7 +418,7 @@ class Interpretable(DataCommon, ABC):
 
         :return:
         """
-        return cls._dict_k_tuple_id_line_number_v_list_interpretable
+        return cls._dict_k_tuple_id_python_frame_line_number_v_list_interpretable
 
     @classmethod
     def get_dict_k_name_v_list_interpretable(cls) -> Dict[str, List[Interpretable]]:
@@ -377,3 +437,12 @@ class Interpretable(DataCommon, ABC):
         :return:
         """
         return cls._dict_k_str_id_v_list_interpretable
+
+    @classmethod
+    def get_dict_k_line_number_v_list_interpretable(cls) -> Dict[int, List[Interpretable]]:
+        """
+        Get a dict where the key is an Interpretable object's line number and the value is a list of Interpretable
+        objects that have the same string id.
+        :return:
+        """
+        return cls._dict_k_line_number_v_list_interpretable
