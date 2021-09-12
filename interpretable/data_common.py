@@ -28,7 +28,6 @@ class DataCommon(ABC):
     def __init__(self,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None):
-
         # Name of this object
         self._name: Union[str, None] = name
 
@@ -39,6 +38,9 @@ class DataCommon(ABC):
 
         # Stack frame index relative to the creation of interpretable recorder
         self._stack_frame_index: Union[int, None] = None
+
+        # Indent Index (Level of the indent)
+        self._scope_number: Union[int, None] = None
 
         ######
 
@@ -101,7 +103,7 @@ class DataCommon(ABC):
 
     ######
 
-    def get_stack_frame_index(self) -> Union[int, None]:
+    def get_stack_frame_number(self) -> Union[int, None]:
         """
         Get the stack frame index
 
@@ -120,3 +122,23 @@ class DataCommon(ABC):
         :return:
         """
         self._stack_frame_index = index
+
+    def get_scope_number(self) -> Union[int, None]:
+        """
+        Get the scope number
+
+        :return:
+        """
+        return self._scope_number
+
+    def auto_set_scope_number(self, index) -> None:
+        """
+        Set the scope number
+
+        Notes:
+            User should not assign this, a recorder must assign this
+
+        :param index:
+        :return:
+        """
+        self._scope_number = index

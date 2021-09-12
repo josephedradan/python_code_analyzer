@@ -19,12 +19,11 @@ Explanation:
 Reference:
 
 """
-from typing import Sequence, Dict, Any
-
 from python_code_analyzer.functions_common import (get_list_length_from_list_str, get_str_from_list_str_and_length)
 from python_code_analyzer.interpretable.event.event import Event
 from python_code_analyzer.interpretable.interpretable import Interpretable
 from python_code_analyzer.interpretable_recorder.interpretable_recorder import InterpretableRecorder
+from typing import Sequence, Dict, Any
 
 AMOUNT_SPACING_MULTIPLE = 4  # Amount of space for the pseudo code look a like code
 AMOUNT_SPACING_HEADER = 2  # Amount of spacing between headers
@@ -32,29 +31,32 @@ AMOUNT_SPACING_HEADER = 2  # Amount of spacing between headers
 """
 Dictionary of Interpretable Header and the method to get that header information given a interpretable
 Notes:
-    Interp. C.# = Interpretable Count Number
-    type C.# = Type Count Number
+    Interp. C# = Interpretable Count Number
+    type C# = Type Count Number
     Line# = Assumed Python code Line Number
-    P.F.T. ID Line# C.# = Python Frame Tuple ID Line Number Count Number
-    Line# C.# = Line Number Count Number
+    P.F.T. ID Line# C# = Python Frame Tuple ID Line Number Count Number
+    Line# C# = Line Number Count Number
     str_id = String ID
-    str_id C.# = String ID Count Number
+    str_id C# = String ID Count Number
     name = Name
-    name C.# = Name Count Number
-    Stack Frame # = Stack Frame number
+    name C# = Name Count Number
+    Stack frame # = Stack frame number
+    Scope # = Scope number
 
 """
 DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD = {
-    "Interp. C.#": lambda interpretable: interpretable.get_call_number_interpretable(),
-    "type C.#": lambda interpretable: interpretable.get_call_number_type(),
+    "Interp. C#": lambda interpretable: interpretable.get_call_number_interpretable(),
+    "type C#": lambda interpretable: interpretable.get_call_number_type(),
     "Line#": lambda interpretable: interpretable.get_line_number(),
-    "P.F.T. ID Line# C.#": lambda interpretable: interpretable.get_call_number_tuple_id_python_frame_line_number(),
-    "Line# C.#": lambda interpretable: interpretable.get_call_number_line_number(),
+    "P.F.T. ID Line# C#": lambda interpretable: interpretable.get_call_number_tuple_id_python_frame_line_number(),
+    "Line# C#": lambda interpretable: interpretable.get_call_number_line_number(),
     "str_id": lambda interpretable: interpretable.get_str_id(),
-    "str_id C.#": lambda interpretable: interpretable.get_call_number_str_id(),
+    "str_id C#": lambda interpretable: interpretable.get_call_number_str_id(),
     "name": lambda interpretable: interpretable.get_name(),
-    "name C.#": lambda interpretable: interpretable.get_call_number_name(),
-    "Stack Frame #": lambda interpretable: interpretable.get_stack_frame_index()
+    "name C#": lambda interpretable: interpretable.get_call_number_name(),
+    "Stack frame #": lambda interpretable: interpretable.get_stack_frame_number(),
+    "Scope #": lambda interpretable: interpretable.get_scope_number()
+
 }
 
 
@@ -103,7 +105,7 @@ class EventRecorderPrinter:
             In the example below, the table is included along with the with is printed with the print_event_call_order_simple
 
         Example:
-            Line#  Interp. C.#  Tup. Line# C.#  type C.#  str_id  str_id C.#  name  name C.#
+            Line#  Interp. C#  Tup. Line# C#  type C#  str_id  str_id C#  name  name C#
             N/A    1            1               1                 1                 1
             33     2            1               1         test    1           W1    1
             39     3            1               2         test    2           W2    1
@@ -165,7 +167,7 @@ class EventRecorderPrinter:
         # for k, v in self.event_recorder.get_dict_k_tuple_id_python_frame_line_number_v_list_interpretable().items():
 
         for event_current in self._interpretable_recorder.get_list_event():
-            str_space_for_code = " " * event_current.get_stack_frame_index() * amount_spacing_multiple
+            str_space_for_code = " " * event_current.get_stack_frame_number() * amount_spacing_multiple
 
             str_formal_event = event_current.get_str_formal()
 
@@ -323,7 +325,7 @@ class EventRecorderPrinter:
         :param offset:
         :return:
         """
-        return " " * (event.get_stack_frame_index() - offset) * amount_spacing_multiple
+        return " " * (event.get_scope_number() - offset) * amount_spacing_multiple
 
 
 def get_list_data_of_event(event: Event):

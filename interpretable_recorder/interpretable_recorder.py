@@ -19,8 +19,6 @@ Explanation:
 Reference:
 
 """
-from typing import List, Union
-
 from python_code_analyzer.interpretable.event.event import Event
 from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
 from python_code_analyzer.interpretable.event.event_border_end_scope_callable import EventBorderEndScopeCallable
@@ -32,6 +30,7 @@ from python_code_analyzer.interpretable.scope.scope import Scope
 from python_code_analyzer.interpretable.scope.scope_callable import ScopeCallable
 from python_code_analyzer.interpretable.scope.scope_iteration import ScopeIteration
 from python_code_analyzer.interpretable.scope.scope_outer import ScopeOuter
+from typing import List, Union
 
 
 class InterpretableRecorder:
@@ -71,6 +70,10 @@ class InterpretableRecorder:
         self._scope_stack_scope_popped_recent: Union[Scope, None] = None
 
         # self._scope_stack_scope_pushed_recent: Union[Scope, None] = None
+
+        """Scope Callable"""
+
+        self._stack_frame_number: int = 1
 
         """
         Initialize starting
@@ -129,6 +132,9 @@ class InterpretableRecorder:
         return self._list_scope_order[-1] if self._list_scope_order else None
 
     def get_stack_frame_number(self) -> int:
+        return self._stack_frame_number
+
+    def get_scope_number(self) -> int:
         return len(self._stack_scope)
 
     """Scope Stack Push/Pop"""
@@ -148,6 +154,7 @@ class InterpretableRecorder:
             scope_new = ScopeIteration("{} {}".format(event_border_start_given.get_name(), "(Iteration Scope)"))
         elif isinstance(event_border_start_given, EventBorderStartScopeCallable):
             scope_new = ScopeCallable("{} {}".format(event_border_start_given.get_name(), "(Callable Scope)"))
+            self._stack_frame_number += 1
         elif isinstance(event_border_start_given, EventBorderEndScopeOuter):
             scope_new = ScopeOuter("{} {}".format(event_border_start_given.get_name(), "(Outer Scope)"))
         else:
@@ -192,6 +199,7 @@ class InterpretableRecorder:
         if isinstance(event_border_end_given, EventBorderEndScopeCallable):
             while True:
                 if isinstance(scope_popped, ScopeCallable):
+                    self._stack_frame_number -= 1
                     break
 
                 scope_popped = self._stack_scope.pop()
@@ -232,6 +240,9 @@ class InterpretableRecorder:
 
         # Assign event_given's stack index number
         event_given.auto_set_stack_frame_number(self.get_stack_frame_number())
+
+        # Assign event_given's scope index
+        event_given.auto_set_scope_number(self.get_scope_number())
 
         # Assign event_given's parent Scope
         event_given.auto_set_scope_parent(self._scope_stack_scope_pushed_recent)
