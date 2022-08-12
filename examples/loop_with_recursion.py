@@ -43,7 +43,7 @@ def recursive(x, sum_previous=None):
         sum_previous += value
 
         # "sum_previous" and "value" recorded
-        python_code_analyzer.event(dict_recorded_vars={"sum_previous": sum_previous, "value": value})
+        python_code_analyzer.event(dict_k_var_name_v_value={"sum_previous": sum_previous, "value": value})
 
     python_code_analyzer.event_iteration_end()
 

@@ -19,13 +19,13 @@ Explanation:
 Reference:
 
 """
-from python_code_analyzer.python_code_analyzer import PythonCodeAnalyzer
+from python_code_analyzer import PythonCodeAnalyzer
 
 python_code_analyzer = PythonCodeAnalyzer()
 
 
-@python_code_analyzer.decorator_wrapper_callable
-def test(n):
+@python_code_analyzer
+def loop(n):
     k = 1
     z = 0
 
@@ -64,6 +64,6 @@ def test(n):
 
 
 if __name__ == '__main__':
-    test(2)
+    loop(2)
     print()
     python_code_analyzer.print_all()

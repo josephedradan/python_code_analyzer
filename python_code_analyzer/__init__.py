@@ -22,3 +22,6 @@ Reference:
 
 from python_code_analyzer.python_code_analyzer import PythonCodeAnalyzer
 from python_code_analyzer.python_code_analyzer import PythonCodeAnalyzer as CodeAnalyzer
+
+# Default PythonCodeAnalyzer object that you can directly import instead
+python_code_analyzer = PythonCodeAnalyzer()

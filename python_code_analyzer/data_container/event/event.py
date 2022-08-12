@@ -24,12 +24,16 @@ from __future__ import annotations
 from abc import ABC
 from typing import Union, Dict, Any, List
 
-from python_code_analyzer.functions_common import get_dict_as_str
-from python_code_analyzer.interpretable.interpretable import Interpretable
-from python_code_analyzer.interpretable.scope.scope import Scope
+from python_code_analyzer.util.functions_common import get_dict_as_str
+from python_code_analyzer.data_container.interpretable import Interpretable
+from python_code_analyzer.data_container.scope.scope import Scope
 
 
 class Event(Interpretable, ABC):
+    """
+    Abstract Event class
+
+    """
 
     def __init__(self,
                  name: Union[str, None] = None,
@@ -39,6 +43,7 @@ class Event(Interpretable, ABC):
                  ):
 
         super().__init__(name, str_id, python_frame_index)
+
         ######
 
         """Variables set by the recorder"""
@@ -61,8 +66,8 @@ class Event(Interpretable, ABC):
 
     def get_str_formal(self) -> str:
         """
-
-        return string "{str_base}: {kwargs}"
+        return string:
+            "{str_base}: {kwargs}"
 
         :return:
         """
@@ -93,6 +98,7 @@ class Event(Interpretable, ABC):
         str_temp = "{}".format(self.get_name())
 
         if self._dict_recorded_var:
+
             if str_temp is None or str_temp == "":
                 str_temp = "|{}|".format(self.get_str_recorded_var())
             else:

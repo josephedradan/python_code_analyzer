@@ -31,14 +31,14 @@ def loop_double(n):
 
     i = 1
 
-    # While 1. "i" recorded. str_id = "test"
-    python_code_analyzer.event_iteration_start("W1", {"i": i}, str_id="test")
+    # While 1. "i" recorded. str_id = "loop"
+    python_code_analyzer.event_iteration_start("W1", {"i": i}, str_id="loop")
     while i <= n:
 
         j = 1
 
-        # While 2. "i", "j" recorded. str_id = "test"
-        python_code_analyzer.event_iteration_start("W2", {"i": i, "j": j}, str_id="test")
+        # While 2. "i", "j" recorded. str_id = "loop"
+        python_code_analyzer.event_iteration_start("W2", {"i": i, "j": j}, str_id="loop")
         while j <= i:
             j = j * 2
 

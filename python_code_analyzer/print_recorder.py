@@ -19,10 +19,10 @@ Explanation:
 Reference:
 
 """
-from python_code_analyzer.functions_common import (get_list_length_from_list_str, get_str_from_list_str_and_length)
-from python_code_analyzer.interpretable.event.event import Event
-from python_code_analyzer.interpretable.interpretable import Interpretable
-from python_code_analyzer.interpretable_recorder.interpretable_recorder import InterpretableRecorder
+from python_code_analyzer.util.functions_common import (get_list_length_from_list_str, get_str_from_list_str_and_length)
+from python_code_analyzer.data_container.event.event import Event
+from python_code_analyzer.data_container.interpretable import Interpretable
+from python_code_analyzer.recorder import Recorder
 from typing import Sequence, Dict, Any
 
 AMOUNT_SPACING_MULTIPLE = 4  # Amount of space for the pseudo code look a like code
@@ -31,17 +31,17 @@ AMOUNT_SPACING_HEADER = 2  # Amount of spacing between headers
 """
 Dictionary of Interpretable Header and the method to get that header information given a interpretable
 Notes:
-    Interp. C# = Interpretable Count Number
-    type C# = Type Count Number
-    Line# = Assumed Python code Line Number
-    P.F.T. ID Line# C# = Python Frame Tuple ID Line Number Count Number
-    Line# C# = Line Number Count Number
-    str_id = String ID
-    str_id C# = String ID Count Number
-    name = Name
-    name C# = Name Count Number
-    Stack frame # = Stack frame number
-    Scope # = Scope number
+    Interp. C# =            Interpretable Count Number
+    type C# =               Type Count Number
+    Line# =                 Assumed Python code Line Number
+    P.F.T. ID Line# C# =    Python Frame Tuple ID Line Number Count Number
+    Line# C# =              Line Number Count Number
+    str_id =                String ID
+    str_id C# =             String ID Count Number
+    name =                  Name
+    name C# =               Name Count Number
+    Stack frame # =         Stack frame number
+    Scope # =               Scope number
 
 """
 DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD = {
@@ -60,10 +60,10 @@ DICT_K_HEADER_INTERPRETABLE_V_INTERPRETABLE_METHOD = {
 }
 
 
-class EventRecorderPrinter:
+class PrintRecorder:
 
-    def __init__(self, interpretable_recorder: InterpretableRecorder):
-        self._interpretable_recorder = interpretable_recorder
+    def __init__(self, recorder: Recorder):
+        self._recorder = recorder
 
     def print_event_call_order_simple(self, amount_spacing_multiple: int = AMOUNT_SPACING_MULTIPLE) -> None:
         """
@@ -74,7 +74,7 @@ class EventRecorderPrinter:
                     W2 |i=1, j=1| {
                         W2V |j=2, _count=1|
                     }
-                    W2 |i=2, j=1| {
+                    W2 |i=2, j=1| {a
                         W2V |j=2, _count=2|
                         W2V |j=4, _count=3|
                     }
@@ -85,7 +85,7 @@ class EventRecorderPrinter:
         :return:
         """
 
-        for event_current in self._interpretable_recorder.get_list_event():
+        for event_current in self._recorder.get_list_event():
             """
             str_space_for_code = Space * (Stack frame - 1) * Spacing
             
@@ -107,11 +107,11 @@ class EventRecorderPrinter:
         Example:
             Line#  Interp. C#  Tup. Line# C#  type C#  str_id  str_id C#  name  name C#
             N/A    1            1               1                 1                 1
-            33     2            1               1         test    1           W1    1
-            39     3            1               2         test    2           W2    1
+            33     2            1               1         loop    1           W1    1
+            39     3            1               2         loop    2           W2    1
             48     4            1               1                 2           W2V   1
             50     5            1               1                 3           W2    2
-            39     6            2               3         test    3           W2    2
+            39     6            2               3         loop    3           W2    2
             48     7            2               2                 4           W2V   2
             48     8            3               3                 5           W2V   3
             50     9            2               2                 6           W2    3
@@ -129,7 +129,7 @@ class EventRecorderPrinter:
         list_data_length_max = get_list_length_from_list_str(list_header, AMOUNT_SPACING_HEADER)
 
         # Loop to adjust values in list_data_length_max
-        for event_current in self._interpretable_recorder.get_list_event():
+        for event_current in self._recorder.get_list_event():
             for i, data in enumerate(get_list_data_of_event(event_current)):
                 cell_length = len(str(data)) + AMOUNT_SPACING_HEADER
 
@@ -140,7 +140,7 @@ class EventRecorderPrinter:
         print(get_str_from_list_str_and_length(list_header, list_data_length_max))
 
         # Loop print the table body
-        for event_current in self._interpretable_recorder.get_list_event():
+        for event_current in self._recorder.get_list_event():
             """
             str_space_for_code = Space * (Stack frame - 1) * Spacing
 
@@ -166,7 +166,7 @@ class EventRecorderPrinter:
 
         # for k, v in self.event_recorder.get_dict_k_tuple_id_python_frame_line_number_v_list_interpretable().items():
 
-        for event_current in self._interpretable_recorder.get_list_event():
+        for event_current in self._recorder.get_list_event():
             str_space_for_code = " " * event_current.get_stack_frame_number() * amount_spacing_multiple
 
             str_formal_event = event_current.get_str_formal()
@@ -207,7 +207,7 @@ class EventRecorderPrinter:
             list_data_length_max = get_list_length_from_list_str(list_header, AMOUNT_SPACING_HEADER)
 
             # Loop to adjust values in list_data_length_max
-            for interpretable in self._interpretable_recorder.get_list_event():
+            for interpretable in self._recorder.get_list_event():
                 for i, data in enumerate(get_list_data_of_event(interpretable)):
                     cell_length = len(str(data)) + AMOUNT_SPACING_HEADER
 

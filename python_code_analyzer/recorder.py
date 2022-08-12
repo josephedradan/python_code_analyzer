@@ -19,21 +19,21 @@ Explanation:
 Reference:
 
 """
-from python_code_analyzer.interpretable.event.event import Event
-from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
-from python_code_analyzer.interpretable.event.event_border_end_scope_callable import EventBorderEndScopeCallable
-from python_code_analyzer.interpretable.event.event_border_end_scope_outer import EventBorderEndScopeOuter
-from python_code_analyzer.interpretable.event.event_border_start import EventBorderStart
-from python_code_analyzer.interpretable.event.event_border_start_scope_callable import EventBorderStartScopeCallable
-from python_code_analyzer.interpretable.event.event_border_start_scope_iteration import EventBorderStartScopeIteration
-from python_code_analyzer.interpretable.scope.scope import Scope
-from python_code_analyzer.interpretable.scope.scope_callable import ScopeCallable
-from python_code_analyzer.interpretable.scope.scope_iteration import ScopeIteration
-from python_code_analyzer.interpretable.scope.scope_outer import ScopeOuter
+from python_code_analyzer.data_container.event.event import Event
+from python_code_analyzer.data_container.event.event_border_end import EventBorderEnd
+from python_code_analyzer.data_container.event.event_border_end_scope_callable import EventBorderEndScopeCallable
+from python_code_analyzer.data_container.event.event_border_end_scope_outer import EventBorderEndScopeOuter
+from python_code_analyzer.data_container.event.event_border_start import EventBorderStart
+from python_code_analyzer.data_container.event.event_border_start_scope_callable import EventBorderStartScopeCallable
+from python_code_analyzer.data_container.event.event_border_start_scope_iteration import EventBorderStartScopeIteration
+from python_code_analyzer.data_container.scope.scope import Scope
+from python_code_analyzer.data_container.scope.scope_callable import ScopeCallable
+from python_code_analyzer.data_container.scope.scope_iteration import ScopeIteration
+from python_code_analyzer.data_container.scope.scope_outer import ScopeOuter
 from typing import List, Union
 
 
-class InterpretableRecorder:
+class Recorder:
     """
     Records Interpretable objects in which a Interpretable object has happened in the order in in which they have
     happened.
@@ -47,7 +47,7 @@ class InterpretableRecorder:
 
     def __init__(self):
         """
-        Initialize the InterpretableRecorder
+        Initialize the Recorder
 
         """
 

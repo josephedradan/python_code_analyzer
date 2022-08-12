@@ -21,9 +21,9 @@ Reference:
 """
 from typing import Union, Callable, Any, Dict, Sequence
 
-from python_code_analyzer.functions_common import get_sequence_as_str, get_dict_as_str
-from python_code_analyzer.interpretable.event.event_border_callable import EventBorderCallable
-from python_code_analyzer.interpretable.event.event_border_start import EventBorderStart
+from python_code_analyzer.util.functions_common import get_sequence_as_str, get_dict_as_str
+from python_code_analyzer.data_container.event.event_border_callable import EventBorderCallable
+from python_code_analyzer.data_container.event.event_border_start import EventBorderStart
 
 
 class EventBorderStartScopeCallable(EventBorderStart, EventBorderCallable):

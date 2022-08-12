@@ -21,9 +21,9 @@ Reference:
 """
 from typing import Any, Union, Dict
 
-from python_code_analyzer.functions_common import get_str_limited
-from python_code_analyzer.interpretable.event.event_border_callable import EventBorderCallable
-from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
+from python_code_analyzer.util.functions_common import get_str_limited
+from python_code_analyzer.data_container.event.event_border_callable import EventBorderCallable
+from python_code_analyzer.data_container.event.event_border_end import EventBorderEnd
 
 
 class EventBorderEndScopeCallable(EventBorderEnd, EventBorderCallable):

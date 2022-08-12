@@ -26,21 +26,21 @@ python_code_analyzer = PythonCodeAnalyzer()
 
 
 @python_code_analyzer.decorator_wrapper_callable
-def _recursive(given):
+def recursive(given):
     count = given
 
     python_code_analyzer.event_iteration_start("W1")  # While 1
 
     while count < 10:
 
-        python_code_analyzer.event_iteration_start("W2", dict_recorded_vars={"count": count})  # While 2
+        python_code_analyzer.event_iteration_start("W2", dict_k_var_name_v_value={"count": count})  # While 2
 
         while count < 10:
             count += 1
 
-            python_code_analyzer.event("W2 Vars", dict_recorded_vars={"count": count})  # While 2 Vars
+            python_code_analyzer.event("W2 Vars", dict_k_var_name_v_value={"count": count})  # While 2 Vars
 
-            return _recursive(count)
+            return recursive(count)
 
         python_code_analyzer.event_iteration_end()
 
@@ -48,7 +48,7 @@ def _recursive(given):
 
 
 if __name__ == '__main__':
-    _recursive(1)
+    recursive(1)
     print()
 
     python_code_analyzer.print_all()

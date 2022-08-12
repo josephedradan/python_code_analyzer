@@ -11,11 +11,16 @@ Details:
 Description:
 
 Notes:
-    Not thread safe
+    *** Not thread safe
 
 IMPORTANT NOTES:
+    *** Not thread safe
 
 Explanation:
+
+TODO:
+    LOOK AT H:\Programming\Python\libraries_private\joseph_library\trace\trace_handler.py
+    TO IMPROVE THIS SHIT
 
 Reference:
     Decorating Hex function to pad zeros
@@ -35,13 +40,13 @@ from collections import defaultdict
 from functools import wraps
 from typing import Any, Callable, Dict, Union, Sequence
 
-from python_code_analyzer.interpretable.event.event import Event
-from python_code_analyzer.interpretable.event.event_border_end_scope_callable import EventBorderEndScopeCallable
-from python_code_analyzer.interpretable.event.event_border_end_scope_iteration import EventBorderEndScopeIteration
-from python_code_analyzer.interpretable.event.event_border_start_scope_callable import EventBorderStartScopeCallable
-from python_code_analyzer.interpretable.event.event_border_start_scope_iteration import EventBorderStartScopeIteration
-from python_code_analyzer.interpretable_recorder.interpretable_recorder import InterpretableRecorder
-from python_code_analyzer.interpretable_recorder.interpretable_recorder_printer import EventRecorderPrinter
+from python_code_analyzer.data_container.event.event import Event
+from python_code_analyzer.data_container.event.event_border_end_scope_callable import EventBorderEndScopeCallable
+from python_code_analyzer.data_container.event.event_border_end_scope_iteration import EventBorderEndScopeIteration
+from python_code_analyzer.data_container.event.event_border_start_scope_callable import EventBorderStartScopeCallable
+from python_code_analyzer.data_container.event.event_border_start_scope_iteration import EventBorderStartScopeIteration
+from python_code_analyzer.recorder import Recorder
+from python_code_analyzer.print_recorder import PrintRecorder
 
 """
 Python frame index for the line number when an event is created
@@ -57,7 +62,8 @@ def _decorator_internal_checker(callable_given=None):
     """
     This decorator is uniquely used by the CodeRecoder
 
-    IDK what this should do
+    Notes:
+        This literally does nothing
 
     :return:
     """
@@ -93,6 +99,7 @@ class PythonCodeAnalyzer:
     """
 
     def __init__(self, python_frame_index=PYTHON_FRAME_INDEX_DEFAULT):
+
         # Make a dictionary to store the callable and its stack frame relative to it being called
         self._dict_k_callable_name_v_index_stack_frame_callable = defaultdict(int)
 
@@ -101,34 +108,35 @@ class PythonCodeAnalyzer:
         Private vars
         """
 
-        # Frame to find the
+        # Frame index
         self._python_frame_index = python_frame_index
 
         # Make a Event recorder object to record the scopes being created and being entered
-        self._interpretable_recorder = InterpretableRecorder()
+        self._interpretable_recorder = Recorder()
 
         #####
 
-        self.event_recorder_printer = EventRecorderPrinter(self._interpretable_recorder)
+        self.print_event_recorder = PrintRecorder(self._interpretable_recorder)
 
     def decorator_wrapper_callable(self,
-                                   callable_given=None,
+                                   callable_given: Callable = None,
                                    name_start: Union[str, None] = None,
                                    str_id_start: Union[str, None] = None,
-                                   dict_recorded_var_start: Union[Dict[str, Any], None] = None,
+                                   dict_k_var_name_v_value: Union[Dict[str, Any], None] = None,
                                    name_end: Union[str, None] = None,
                                    str_id_end: Union[str, None] = None,
                                    dict_recorded_var_end: Union[Dict[str, Any], None] = None
-                                   ) -> Any:
+                                   ) -> Callable:
         """
-        Higher order decorator only accessible by this object that you put on top of a callable header to allow that
-        callable to be recorded
+        Higher order decorator only accessible by this object.
+        Put this on top of a callable header to allow that callable to be recorded
 
-        1.  Increment and decrement a callable_given's stack frame index.
-        2.  Increment and decrement the algorithm recorder's stack frame index (The stack frame relative to the creation
-            of the algorithm recorder).
-        3.  Makes a event object when the callable is called.
-        4.  Keep track of the current callable being called.
+        Process:
+            1.  Increment and decrement a callable_given's stack frame index.
+            2.  Increment and decrement the this object's stack frame index (The stack frame relative to the creation
+                of the this object).
+            3.  Makes a event object when the callable is called.
+            4.  Keep track of the current callable being called.
 
         This wrapper wraps the given callable so when the callable is called a new scope is created and
         the stack frame for the self and for the callable is incremented.
@@ -150,7 +158,7 @@ class PythonCodeAnalyzer:
         :param callable_given: Callable
         :param name_start:
         :param str_id_start:
-        :param dict_recorded_var_start:
+        :param dict_k_var_name_v_value:
         :param name_end:
         :param str_id_end:
         :param dict_recorded_var_end:
@@ -177,7 +185,7 @@ class PythonCodeAnalyzer:
 
                 # Create the scope for the callable_given
                 self._event_callable_start(callable_given_inner, args, kwargs, name_start, str_id_start,
-                                           dict_recorded_var_start)
+                                           dict_k_var_name_v_value)
 
                 # Execute and return the result's of callable_given
                 result = callable_given_inner(*args, **kwargs)
@@ -194,9 +202,32 @@ class PythonCodeAnalyzer:
         # return the wrapped wrapped callable
         return decorator(callable_given) if callable_given else decorator
 
+    def __call__(self,
+                 callable_given: Callable = None,
+                 name_start: Union[str, None] = None,
+                 str_id_start: Union[str, None] = None,
+                 dict_k_var_name_v_value: Union[Dict[str, Any], None] = None,
+                 name_end: Union[str, None] = None,
+                 str_id_end: Union[str, None] = None,
+                 dict_recorded_var_end: Union[Dict[str, Any], None] = None
+                 ) -> Callable:
+        """
+        Instead of calling decorator_wrapper_callable directly, you can use this object's __call__ as an alternative
+
+        """
+        return self.decorator_wrapper_callable(
+            callable_given,
+            name_start,
+            str_id_start,
+            dict_k_var_name_v_value,
+            name_end,
+            str_id_end,
+            dict_recorded_var_end
+        )
+
     def event(self,
               name: Union[str, None] = None,
-              dict_recorded_vars: Dict[str, Any] = None,
+              dict_k_var_name_v_value: Dict[str, Any] = None,
               str_id: Union[str, None] = None
               ) -> None:
         """
@@ -208,13 +239,13 @@ class PythonCodeAnalyzer:
         event_new = Event(name,
                           str_id,
                           self._python_frame_index,
-                          dict_recorded_vars)
+                          dict_k_var_name_v_value)
 
         self._interpretable_recorder.add_event(event_new)
 
     def event_iteration_start(self,
                               name: Union[str, None] = None,
-                              dict_recorded_vars: Dict[str, Any] = None,
+                              dict_k_var_name_v_value: Dict[str, Any] = None,
                               str_id: Union[str, None] = None
                               ) -> None:
         """
@@ -224,7 +255,7 @@ class PythonCodeAnalyzer:
         event_new = EventBorderStartScopeIteration(name,
                                                    str_id,
                                                    self._python_frame_index,
-                                                   dict_recorded_vars)
+                                                   dict_k_var_name_v_value)
 
         self._interpretable_recorder.add_event(event_new)
 
@@ -255,7 +286,11 @@ class PythonCodeAnalyzer:
                               dict_recorded_vars: Dict[str, Any] = None
                               ) -> None:
         """
+        IMPORTANT NOTE:
+            THIS IS AUTOMATICALLY USED BY THIS CLASSES DECORATOR DECORATOR
+
         Create a ScopeCallable and push it to interpretable recorder
+
 
         :return: None
         """
@@ -277,11 +312,11 @@ class PythonCodeAnalyzer:
                             dict_recorded_vars: Dict[str, Any] = None
                             ) -> None:
         """
-        State that an callable's scope has returned with something.
-        Pop it from the scope recorder.
-
         IMPORTANT NOTE:
-            THIS SHOULD BE HANDLED AUTOMATICALLY WITH THE DECORATOR
+            THIS IS AUTOMATICALLY USED BY THIS CLASSES DECORATOR DECORATOR
+
+        1. State that an callable's scope has returned with something.
+        2. Pop it from the scope recorder.
 
         :return: None
         """
@@ -294,9 +329,9 @@ class PythonCodeAnalyzer:
 
         self._interpretable_recorder.add_event(event_new)
 
-    def get_scope_recorder(self) -> InterpretableRecorder:
+    def get_scope_recorder(self) -> Recorder:
         """
-        Return the scope recorder object of this algorithm recorder object
+        Return the scope recorder object of this this object object
 
         :return: the scope recorder for this object
         """
@@ -317,7 +352,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order Simple")
         print()
-        self.event_recorder_printer.print_event_call_order_simple()
+        self.print_event_recorder.print_event_call_order_simple()
         print()
         print()
 
@@ -325,7 +360,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order Detailed")
         print()
-        self.event_recorder_printer.print_event_call_order_detailed()
+        self.print_event_recorder.print_event_call_order_detailed()
         print()
         print()
 
@@ -333,7 +368,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order Debug")
         print()
-        self.event_recorder_printer.print_event_call_order_debug()
+        self.print_event_recorder.print_event_call_order_debug()
         print()
         print()
 
@@ -341,7 +376,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order by String ID")
         print()
-        self.event_recorder_printer.print_dict_k_str_id_v_list_interpretable()
+        self.print_event_recorder.print_dict_k_str_id_v_list_interpretable()
         print()
         print()
 
@@ -349,7 +384,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order by name")
         print()
-        self.event_recorder_printer.print_dict_k_name_v_list_interpretable()
+        self.print_event_recorder.print_dict_k_name_v_list_interpretable()
         print()
         print()
 
@@ -357,7 +392,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order by __qualname__")
         print()
-        self.event_recorder_printer.print_dict_k_qualname_v_list_interpretable()
+        self.print_event_recorder.print_dict_k_qualname_v_list_interpretable()
         print()
         print()
 
@@ -365,7 +400,7 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order by Tuple Line Number")
         print()
-        self.event_recorder_printer.print_dict_k_tuple_line_number_v_list_interpretable()
+        self.print_event_recorder.print_dict_k_tuple_line_number_v_list_interpretable()
         print()
         print()
 
@@ -373,6 +408,6 @@ class PythonCodeAnalyzer:
         print(border_symbol * amount)
         print("Event Call Order by Line Number")
         print()
-        self.event_recorder_printer.print_dict_k_line_number_v_list_interpretable()
+        self.print_event_recorder.print_dict_k_line_number_v_list_interpretable()
         print()
         print()

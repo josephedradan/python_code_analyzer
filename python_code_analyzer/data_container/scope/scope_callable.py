@@ -21,10 +21,10 @@ Reference:
 """
 from typing import Union
 
-from python_code_analyzer.interpretable.scope.scope import Scope
+from python_code_analyzer.data_container.scope.scope import Scope
 
 
-class ScopeIteration(Scope):
+class ScopeCallable(Scope):
 
     def __init__(self,
                  name: Union[str, None] = None,

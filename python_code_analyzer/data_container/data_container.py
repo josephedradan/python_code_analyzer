@@ -5,6 +5,7 @@ Github: https://github.com/josephedradan
 Date created: 8/8/2021
 
 Purpose:
+    Container for common data for classes that subclass from this class
 
 Details:
 
@@ -23,11 +24,19 @@ from abc import ABC, abstractmethod
 from typing import Union
 
 
-class DataCommon(ABC):
+class DataContainer(ABC):
+    """
+    Container class that holds simple data sush as:
+        name                name of the object
+        str_id              custom identifier used for counting
+        stack_frame_index   stack frame index
+        scope_number        scope level
 
+    """
     def __init__(self,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None):
+
         # Name of this object
         self._name: Union[str, None] = name
 
@@ -46,10 +55,7 @@ class DataCommon(ABC):
 
     def get_name(self) -> Union[str, None]:
         """
-        Name of this object that the user gave it
-
-        Notes:
-            user assigns this.
+        Name of this object
 
         :return:
         """
@@ -57,7 +63,9 @@ class DataCommon(ABC):
 
     def get_str_formal(self) -> str:
         """
-        return string: "{address_hex}: {type(self).__qualname__}: {self.get_name()}"
+        Returns a formal string representation of this object
+
+        return string: f"{address_hex}: {type(self).__qualname__}: {self.get_name()}"
 
         :return:
         """
@@ -73,6 +81,8 @@ class DataCommon(ABC):
     def get_str_pseudo_like(self) -> str:
         """
         Get a string that looks more like pseudo code of this Interpretable
+
+        TODO:
 
         :return:
         """

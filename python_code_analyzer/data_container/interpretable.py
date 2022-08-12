@@ -26,15 +26,27 @@ from abc import ABC
 from collections import defaultdict
 from typing import List, Union, Sequence, Dict
 
-from python_code_analyzer.interpretable.data_common import DataCommon
+from python_code_analyzer.data_container.data_container import DataContainer
 
 
-class Interpretable(DataCommon, ABC):
+class Interpretable(DataContainer, ABC):
+    """
+    Container class that hold data:
+
+
+
+    """
+
     # Dict Key of the name of the Interpretable type that has a value of a list of those specific types of objects
     _dict_k_type_qualname_v_list_type_self: Dict[str, List[Interpretable]] = defaultdict(list)
 
     # List of objects of the type Interpretable
     _list_object_of_type_interpretable: List[Interpretable] = []
+
+    ##########
+    """
+    The below are obejcts that are used to track this object
+    """
 
     """
     Tuple ID based on all the python frames associated with the creation of the interpretable using the frame's source 

@@ -19,12 +19,12 @@ Explanation:
 Reference:
 
 """
-from typing import Union, Dict, Any
+from typing import Dict, Any, Union
 
-from python_code_analyzer.interpretable.event.event_border_start import EventBorderStart
+from python_code_analyzer.data_container.event.event_border_end import EventBorderEnd
 
 
-class EventBorderStartScopeOuter(EventBorderStart):
+class EventBorderEndScopeOuter(EventBorderEnd):
 
     def __init__(self,
                  name: Union[str, None] = None,

@@ -20,7 +20,7 @@ Reference:
 
 """
 
-from python_code_analyzer.interpretable.event.event_border import EventBorder
+from python_code_analyzer.data_container.event.event_border import EventBorder
 
 
 class EventBorderCallable(EventBorder):

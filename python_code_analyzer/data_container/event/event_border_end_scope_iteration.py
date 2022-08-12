@@ -21,7 +21,7 @@ Reference:
 """
 from typing import Dict, Any, Union
 
-from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
+from python_code_analyzer.data_container.event.event_border_end import EventBorderEnd
 
 
 class EventBorderEndScopeIteration(EventBorderEnd):

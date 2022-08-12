@@ -22,7 +22,7 @@ Reference:
 from abc import ABC
 from typing import Union, Dict, Any
 
-from python_code_analyzer.interpretable.event.event_border import EventBorder
+from python_code_analyzer.data_container.event.event_border import EventBorder
 
 
 class EventBorderEnd(EventBorder, ABC):

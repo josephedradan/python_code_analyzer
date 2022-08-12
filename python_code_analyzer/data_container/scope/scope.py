@@ -27,15 +27,15 @@ from __future__ import annotations
 from abc import ABC
 from typing import Union, List, TYPE_CHECKING
 
-from python_code_analyzer.interpretable.data_common import DataCommon
+from python_code_analyzer.data_container.data_container import DataContainer
 
 if TYPE_CHECKING:
-    from python_code_analyzer.interpretable.event.event import Event
-    from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
-    from python_code_analyzer.interpretable.event.event_border_start import EventBorderStart
+    from python_code_analyzer.data_container.event.event import Event
+    from python_code_analyzer.data_container.event.event_border_end import EventBorderEnd
+    from python_code_analyzer.data_container.event.event_border_start import EventBorderStart
 
 
-class Scope(DataCommon, ABC):
+class Scope(DataContainer, ABC):
     def __init__(self,
                  name: Union[str, None] = None,
                  str_id: Union[str, None] = None

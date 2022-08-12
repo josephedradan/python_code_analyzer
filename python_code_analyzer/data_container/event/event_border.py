@@ -22,11 +22,15 @@ Reference:
 from abc import ABC
 from typing import Union, Dict, Any
 
-from python_code_analyzer.interpretable.event.event import Event
-from python_code_analyzer.interpretable.scope.scope import Scope
+from python_code_analyzer.data_container.event.event import Event
+from python_code_analyzer.data_container.scope.scope import Scope
 
 
 class EventBorder(Event, ABC):
+    """
+    Abstract EventBoarder class
+
+    """
 
     def __init__(self,
                  name: Union[str, None] = None,

@@ -19,12 +19,12 @@ Explanation:
 Reference:
 
 """
-from typing import Dict, Any, Union
+from typing import Union, Dict, Any
 
-from python_code_analyzer.interpretable.event.event_border_end import EventBorderEnd
+from python_code_analyzer.data_container.event.event_border_start import EventBorderStart
 
 
-class EventBorderEndScopeOuter(EventBorderEnd):
+class EventBorderStartScopeIteration(EventBorderStart):
 
     def __init__(self,
                  name: Union[str, None] = None,
@@ -33,3 +33,7 @@ class EventBorderEndScopeOuter(EventBorderEnd):
                  dict_recorded_var: Union[Dict[str, Any], None] = None
                  ):
         super().__init__(name, str_id, python_frame_index, dict_recorded_var)
+
+    def get_str_pseudo_like(self) -> str:
+        # return "{} {{".format(super(EventBorderStartScopeIteration, self).get_str_pseudo_like())
+        return "{}".format(super(EventBorderStartScopeIteration, self).get_str_pseudo_like())
